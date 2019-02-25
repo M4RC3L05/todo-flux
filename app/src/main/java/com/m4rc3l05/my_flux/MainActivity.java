@@ -1,19 +1,12 @@
 package com.m4rc3l05.my_flux;
 
-import android.animation.Animator;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,20 +15,15 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.m4rc3l05.my_flux.Actions.AddTodoAction;
 import com.m4rc3l05.my_flux.Actions.AsyncCallAction;
-import com.m4rc3l05.my_flux.Actions.InitTodosAction;
 import com.m4rc3l05.my_flux.Actions.RemoveTodoAction;
 import com.m4rc3l05.my_flux.Actions.UndoRemoveTodoAction;
 import com.m4rc3l05.my_flux.Models.Todo;
