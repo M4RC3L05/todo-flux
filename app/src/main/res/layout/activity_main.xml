@@ -35,7 +35,7 @@
 
         <android.support.constraint.ConstraintLayout
             android:elevation="16dp"
-            android:animateLayoutChanges="true"
+            android:clipChildren="true"
             android:id="@+id/cardViewAddTodoForm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -59,17 +59,20 @@
                 android:background="@android:color/transparent"
                 android:hint="TO-DO"
                 android:inputType="text"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:textColor="#000"
                 android:textColorHint="#ccc"
+                android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/btn_addTodo"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <FrameLayout
-                android:animateLayoutChanges="true"
                 android:id="@+id/btn_addTodo"
-                android:layout_width="wrap_content"
+                android:layout_width="110dp"
+                android:translationX="110dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/add_todo_bg_color"
                 android:clickable="true"
@@ -78,16 +81,10 @@
                 android:paddingTop="14dp"
                 android:paddingEnd="14dp"
                 android:paddingBottom="14dp"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/plusBtnIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_plus" />
 
                 <TextView
                     android:id="@+id/btnAddTodoText"
@@ -97,7 +94,7 @@
                     android:text="ADD TO-DO"
                     android:textColor="#fff"
                     android:textSize="16sp"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
             </FrameLayout>
 
         </android.support.constraint.ConstraintLayout>

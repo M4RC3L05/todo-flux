@@ -1,6 +1,7 @@
 package com.m4rc3l05.my_flux;
 
 
+import android.animation.Animator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -72,6 +73,9 @@ public class MainActivity extends AppCompatActivity implements IView {
         });
 
         this.newTodoTextInput.addTextChangedListener(new TextWatcher() {
+            private boolean isOpen = false;
+
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -82,11 +86,71 @@ public class MainActivity extends AppCompatActivity implements IView {
                 String currText = s.toString();
 
                 if (currText.length() <= 0) {
-                    addNewTodoBtn.findViewById(R.id.plusBtnIcon).setVisibility(View.VISIBLE);
-                    addNewTodoBtn.findViewById(R.id.btnAddTodoText).setVisibility(View.GONE);
-                } else {
-                    addNewTodoBtn.findViewById(R.id.plusBtnIcon).setVisibility(View.INVISIBLE);
-                    addNewTodoBtn.findViewById(R.id.btnAddTodoText).setVisibility(View.VISIBLE);
+                    addNewTodoBtn
+                            .animate()
+                            .setInterpolator(t -> {
+                                if ((t *= 2) < 1) {
+                                    return (float) (0.5 * Math.pow(t, 4));
+                                }
+
+                                return (float) (1 - 0.5 * Math.abs(Math.pow(2 - t, 4)));
+                            })
+                            .setListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    isOpen = false;
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    isOpen = false;
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+                                    isOpen = false;
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            })
+                            .setDuration(600)
+                            .translationX(newTodoTextInput.getWidth());
+                } else if(!isOpen) {
+                    addNewTodoBtn
+                            .animate()
+                            .setInterpolator(t -> {
+                                if ((t *= 2) < 1) {
+                                    return (float) (0.5 * Math.pow(t, 4));
+                                }
+
+                                return (float) (1 - 0.5 * Math.abs(Math.pow(2 - t, 4)));
+                            })
+                            .setListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    isOpen = true;
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    isOpen = true;
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+                                    isOpen = false;
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            })
+                            .setDuration(600)
+                            .translationX(0f);
                 }
             }
 
@@ -169,6 +233,8 @@ public class MainActivity extends AppCompatActivity implements IView {
 
         this.mAdapter = MyAdapter.create(new ArrayList<>(), this.dispatcher, this);
         this.recyclerView.setAdapter(this.mAdapter);
+
+        findViewById(R.id.cardViewAddTodoForm).setClipToOutline(true);
     }
 
     public void onAddNewTodo() {
