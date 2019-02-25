@@ -23,8 +23,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <LinearLayout
-
+    <FrameLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/fade_bg_black"
@@ -35,6 +34,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <android.support.constraint.ConstraintLayout
+            android:elevation="16dp"
             android:animateLayoutChanges="true"
             android:id="@+id/cardViewAddTodoForm"
             android:layout_width="match_parent"
@@ -51,14 +51,14 @@
             <EditText
                 android:id="@+id/txtTodoText"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="12dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:background="@android:color/transparent"
-                android:hint="Todo Text"
-                android:inputType="textLongMessage|textPersonName"
+                android:hint="TO-DO"
+                android:inputType="text"
                 android:textColor="#000"
                 android:textColorHint="#ccc"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -94,15 +94,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Add Todo"
+                    android:text="ADD TO-DO"
                     android:textColor="#fff"
-                    android:textSize="18dp"
+                    android:textSize="16sp"
                     android:visibility="gone" />
             </FrameLayout>
 
         </android.support.constraint.ConstraintLayout>
 
-    </LinearLayout>
+    </FrameLayout>
 
     <ProgressBar
         android:id="@+id/loadingTodosSpinner"

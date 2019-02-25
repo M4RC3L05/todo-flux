@@ -24,6 +24,7 @@ import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -77,6 +78,10 @@ public class MainActivity extends AppCompatActivity implements IView {
     }
 
     private void setUpListeners() {
+        this.newTodoTextInput.setOnEditorActionListener((v, actionId, event) -> {
+            this.onAddNewTodo();
+            return true;
+        });
 
         this.newTodoTextInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -103,22 +108,7 @@ public class MainActivity extends AppCompatActivity implements IView {
             }
         });
 
-        this.addNewTodoBtn.setOnClickListener(l -> {
-            String text = newTodoTextInput.getText().toString();
-
-            if (text.length() <= 0) return;
-
-            Todo todoToInsert = Todo.create(UUID.randomUUID().toString(), text, false, "" + new Timestamp(System.currentTimeMillis()).getTime());
-
-            if (!dbHelper.addNewTodo(todoToInsert)) return;
-
-            this.dispatcher.dispatch(AddTodoAction.create(todoToInsert));
-            mAdapter.notifyItemInserted(0);
-            newTodoTextInput.setText("");
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(newTodoTextInput.getWindowToken(), 0);
-            this.recyclerView.smoothScrollToPosition(0);
-        });
+        this.addNewTodoBtn.setOnClickListener(l -> this.onAddNewTodo());
 
         ItemTouchHelper ith = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
@@ -149,30 +139,34 @@ public class MainActivity extends AppCompatActivity implements IView {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                Todo todo = mAdapter.getTodoAt(viewHolder.getAdapterPosition());
-                int pos = viewHolder.getAdapterPosition();
-
-                if (!dbHelper.deleteTodo(todo.get_id())) return;
-
-                dispatcher.dispatch(RemoveTodoAction.create(todo.get_id()));
-                mAdapter.notifyItemRemoved(pos);
-
-                Snackbar sb = Snackbar.make(findViewById(R.id.mainlayout), "Todo Deleted", Snackbar.LENGTH_LONG)
-                        .setAction("Undo", v -> {
-
-                            if (!dbHelper.addNewTodo(todo)) return;
-                            dispatcher.dispatch(UndoRemoveTodoAction.create(todo, pos));
-                            mAdapter.notifyItemInserted(pos);
-                        });
-
-                sb.getView().setBackgroundColor(Color.WHITE);
-                ((TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.BLACK);
-
-                sb.show();
+                onDeleteTodo(viewHolder);
             }
         });
 
         ith.attachToRecyclerView(this.recyclerView);
+    }
+
+    public void onDeleteTodo(@NonNull RecyclerView.ViewHolder viewHolder) {
+        Todo todo = mAdapter.getTodoAt(viewHolder.getAdapterPosition());
+        int pos = viewHolder.getAdapterPosition();
+
+        if (!dbHelper.deleteTodo(todo.get_id())) return;
+
+        dispatcher.dispatch(RemoveTodoAction.create(todo.get_id()));
+        mAdapter.notifyItemRemoved(pos);
+
+        Snackbar sb = Snackbar.make(findViewById(R.id.mainlayout), "Todo Deleted", Snackbar.LENGTH_LONG)
+                .setAction("Undo", v -> {
+
+                    if (!dbHelper.addNewTodo(todo)) return;
+                    dispatcher.dispatch(UndoRemoveTodoAction.create(todo, pos));
+                    mAdapter.notifyItemInserted(pos);
+                });
+
+        sb.getView().setBackgroundColor(Color.WHITE);
+        ((TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.BLACK);
+
+        sb.show();
     }
 
     public void setUpUI() {
@@ -187,6 +181,23 @@ public class MainActivity extends AppCompatActivity implements IView {
 
         this.mAdapter = MyAdapter.create(new ArrayList<>(), this.dispatcher, this);
         this.recyclerView.setAdapter(this.mAdapter);
+    }
+
+    public void onAddNewTodo() {
+        String text = newTodoTextInput.getText().toString();
+
+        if (text.length() <= 0) return;
+
+        Todo todoToInsert = Todo.create(UUID.randomUUID().toString(), text, false, "" + new Timestamp(System.currentTimeMillis()).getTime());
+
+        if (!dbHelper.addNewTodo(todoToInsert)) return;
+
+        this.dispatcher.dispatch(AddTodoAction.create(todoToInsert));
+        mAdapter.notifyItemInserted(0);
+        newTodoTextInput.setText("");
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(newTodoTextInput.getWindowToken(), 0);
+        this.recyclerView.smoothScrollToPosition(0);
     }
 
     public void render() {
