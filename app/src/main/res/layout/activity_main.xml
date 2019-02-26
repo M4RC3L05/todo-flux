@@ -5,6 +5,7 @@
     android:id="@+id/mainlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:background="#000"
     android:orientation="vertical"
     tools:context=".MainActivity">
@@ -16,90 +17,89 @@
         android:clipToPadding="false"
         android:elevation="0dp"
         android:paddingTop="100dp"
+        android:paddingBottom="16dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <FrameLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:id="@+id/bg_faded"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@drawable/fade_bg_black"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.constraint.ConstraintLayout
+        android:elevation="16dp"
+        android:clipChildren="true"
+        android:id="@+id/cardViewAddTodoForm"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/add_todo_form_background"
+        android:layoutMode="opticalBounds"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.constraint.ConstraintLayout
-            android:elevation="16dp"
-            android:clipChildren="true"
-            android:id="@+id/cardViewAddTodoForm"
-            android:layout_width="match_parent"
+        <EditText
+            android:id="@+id/txtTodoText"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@drawable/add_todo_form_background"
-            android:layoutMode="opticalBounds"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
+            android:hint="TO-DO"
+            android:inputType="text"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:textColor="#000"
+            android:textColorHint="#ccc"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_addTodo"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <FrameLayout
+            android:id="@+id/btn_addTodo"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/add_todo_bg_color"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="14dp"
+            android:paddingTop="14dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="14dp"
+            android:translationX="110dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <EditText
-                android:id="@+id/txtTodoText"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/btnAddTodoText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@android:color/transparent"
-                android:hint="TO-DO"
-                android:inputType="text"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:textColor="#000"
-                android:textColorHint="#ccc"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/btn_addTodo"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_gravity="center"
+                android:text="ADD TO-DO"
+                android:textColor="#fff"
+                android:textSize="16sp"
+                android:visibility="visible" />
+        </FrameLayout>
 
-            <FrameLayout
-                android:id="@+id/btn_addTodo"
-                android:layout_width="110dp"
-                android:translationX="110dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/add_todo_bg_color"
-                android:clickable="true"
-                android:focusable="true"
-                android:paddingStart="14dp"
-                android:paddingTop="14dp"
-                android:paddingEnd="14dp"
-                android:paddingBottom="14dp"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/btnAddTodoText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="ADD TO-DO"
-                    android:textColor="#fff"
-                    android:textSize="16sp"
-                    android:visibility="visible" />
-            </FrameLayout>
-
-        </android.support.constraint.ConstraintLayout>
-
-    </FrameLayout>
+    </android.support.constraint.ConstraintLayout>
 
     <ProgressBar
         android:id="@+id/loadingTodosSpinner"
@@ -112,5 +112,21 @@
         app:layout_constraintEnd_toEndOf="@+id/recylerVTodos"
         app:layout_constraintStart_toStartOf="@+id/recylerVTodos"
         app:layout_constraintTop_toTopOf="@+id/recylerVTodos" />
+
+    <ImageButton
+        android:id="@+id/scrollTopBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/scroll_top_bg_btn"
+        android:elevation="16dp"
+        android:padding="16dp"
+        android:src="@drawable/ic_up_arrow"
+        android:scaleX="0"
+        android:scaleY="0"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </android.support.constraint.ConstraintLayout >

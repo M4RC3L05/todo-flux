@@ -2,11 +2,16 @@ package com.m4rc3l05.my_flux;
 
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,11 +20,19 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.transition.AutoTransition;
+import android.transition.TransitionManager;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.BounceInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -48,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements IView {
     public ProgressBar loadingTodosSpinner;
     public EditText newTodoTextInput;
     public FrameLayout addNewTodoBtn;
+    public ImageButton scrollTopBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,6 +210,123 @@ public class MainActivity extends AppCompatActivity implements IView {
         });
 
         ith.attachToRecyclerView(this.recyclerView);
+
+        this.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            private boolean isAnimating = false;
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && recyclerView.computeVerticalScrollOffset() < 80) {
+                    findViewById(R.id.cardViewAddTodoForm)
+                            .animate()
+                            .alpha(1)
+                            .setInterpolator(t -> {
+                                if ((t *= 2) < 1) {
+                                    return (float) (0.5 * Math.pow(t, 4));
+                                }
+
+                                return (float) (1 - 0.5 * Math.abs(Math.pow(2 - t, 4)));
+                            })
+                            .setDuration(500)
+                            .start();
+
+                    // scrollTopBtn.setVisibility(View.GONE);
+                    scrollTopBtn
+                            .animate()
+                            .scaleX(0f)
+                            .scaleY(0f)
+                            .setInterpolator(t -> {
+                                if ((t *= 2) < 1) {
+                                    return (float) (0.5 * Math.pow(t, 4));
+                                }
+
+                                return (float) (1 - 0.5 * Math.abs(Math.pow(2 - t, 4)));
+                            })
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    super.onAnimationEnd(animation);
+                                    scrollTopBtn.setVisibility(View.GONE);
+                                }
+                            })
+                            .setDuration(500)
+                            .start();
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (recyclerView.computeVerticalScrollOffset() >= 80 && !isAnimating && findViewById(R.id.cardViewAddTodoForm).getAlpha() != 0f) {
+
+                    findViewById(R.id.cardViewAddTodoForm)
+                            .animate()
+                            .alpha(0)
+                            .setInterpolator(t -> {
+                                if ((t *= 2) < 1) {
+                                    return (float) (0.5 * Math.pow(t, 4));
+                                }
+
+                                return (float) (1 - 0.5 * Math.abs(Math.pow(2 - t, 4)));
+                            })
+                            .setListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    isAnimating = true;
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    isAnimating = false;
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            })
+                            .setDuration(500)
+                            .start();
+
+
+                    scrollTopBtn
+                            .animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setInterpolator(t -> {
+                                if ((t *= 2) < 1) {
+                                    return (float) (0.5 * Math.pow(t, 4));
+                                }
+
+                                return (float) (1 - 0.5 * Math.abs(Math.pow(2 - t, 4)));
+                            })
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    super.onAnimationStart(animation);
+                                    scrollTopBtn.setVisibility(View.VISIBLE);
+                                }
+                            })
+                            .setDuration(500)
+                            .start();
+
+                }
+
+
+            }
+        });
+
+        this.scrollTopBtn.setOnClickListener(v -> {
+            this.recyclerView.smoothScrollToPosition(0);
+        });
     }
 
     public void onDeleteTodo(@NonNull RecyclerView.ViewHolder viewHolder) {
@@ -233,6 +364,7 @@ public class MainActivity extends AppCompatActivity implements IView {
 
         this.mAdapter = MyAdapter.create(new ArrayList<>(), this.dispatcher, this);
         this.recyclerView.setAdapter(this.mAdapter);
+        this.scrollTopBtn = findViewById(R.id.scrollTopBtn);
 
         findViewById(R.id.cardViewAddTodoForm).setClipToOutline(true);
     }
@@ -258,7 +390,6 @@ public class MainActivity extends AppCompatActivity implements IView {
         TodoState ts = this.todoStore.getState();
 
         this.mAdapter.setItems(ts.todos);
-
 
         this.loadingTodosSpinner.setVisibility(ts.isLoading ? View.VISIBLE : View.INVISIBLE);
     }
