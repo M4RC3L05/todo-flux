@@ -233,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements IView {
                             .setDuration(500)
                             .start();
 
+
                     // scrollTopBtn.setVisibility(View.GONE);
                     scrollTopBtn
                             .animate()
@@ -250,6 +251,60 @@ public class MainActivity extends AppCompatActivity implements IView {
                                 public void onAnimationEnd(Animator animation) {
                                     super.onAnimationEnd(animation);
                                     scrollTopBtn.setVisibility(View.GONE);
+                                }
+                            })
+                            .setDuration(500)
+                            .start();
+                } else {
+                    findViewById(R.id.cardViewAddTodoForm)
+                            .animate()
+                            .alpha(0)
+                            .setInterpolator(t -> {
+                                if ((t *= 2) < 1) {
+                                    return (float) (0.5 * Math.pow(t, 4));
+                                }
+
+                                return (float) (1 - 0.5 * Math.abs(Math.pow(2 - t, 4)));
+                            })
+                            .setListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    isAnimating = true;
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    isAnimating = false;
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            })
+                            .setDuration(500)
+                            .start();
+
+                    scrollTopBtn
+                            .animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setInterpolator(t -> {
+                                if ((t *= 2) < 1) {
+                                    return (float) (0.5 * Math.pow(t, 4));
+                                }
+
+                                return (float) (1 - 0.5 * Math.abs(Math.pow(2 - t, 4)));
+                            })
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    super.onAnimationStart(animation);
+                                    scrollTopBtn.setVisibility(View.VISIBLE);
                                 }
                             })
                             .setDuration(500)
