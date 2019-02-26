@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements IView {
     public ProgressBar loadingTodosSpinner;
     public EditText newTodoTextInput;
     public FrameLayout addNewTodoBtn;
-    public ImageButton scrollTopBtn;
+    // public ImageButton scrollTopBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements IView {
 
         ith.attachToRecyclerView(this.recyclerView);
 
-        this.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        /* this.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             private boolean isAnimating = false;
 
@@ -377,11 +377,11 @@ public class MainActivity extends AppCompatActivity implements IView {
 
 
             }
-        });
+        }); */
 
-        this.scrollTopBtn.setOnClickListener(v -> {
+        /*this.scrollTopBtn.setOnClickListener(v -> {
             this.recyclerView.smoothScrollToPosition(0);
-        });
+        });*/
     }
 
     public void onDeleteTodo(@NonNull RecyclerView.ViewHolder viewHolder) {
@@ -419,7 +419,7 @@ public class MainActivity extends AppCompatActivity implements IView {
 
         this.mAdapter = MyAdapter.create(new ArrayList<>(), this.dispatcher, this);
         this.recyclerView.setAdapter(this.mAdapter);
-        this.scrollTopBtn = findViewById(R.id.scrollTopBtn);
+        // this.scrollTopBtn = findViewById(R.id.scrollTopBtn);
 
         findViewById(R.id.cardViewAddTodoForm).setClipToOutline(true);
     }

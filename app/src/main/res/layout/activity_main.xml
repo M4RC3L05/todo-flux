@@ -113,6 +113,7 @@
         app:layout_constraintStart_toStartOf="@+id/recylerVTodos"
         app:layout_constraintTop_toTopOf="@+id/recylerVTodos" />
 
+    <!--
     <ImageButton
         android:id="@+id/scrollTopBtn"
         android:layout_width="wrap_content"
@@ -128,5 +129,6 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+        -->
 
 </android.support.constraint.ConstraintLayout >
