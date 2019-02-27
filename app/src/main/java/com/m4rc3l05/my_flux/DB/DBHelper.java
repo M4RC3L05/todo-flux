@@ -1,4 +1,4 @@
-package com.m4rc3l05.my_flux;
+package com.m4rc3l05.my_flux.DB;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.m4rc3l05.my_flux.Models.Todo;
+import com.m4rc3l05.my_flux.Core.Models.Todo;
 
 import java.util.ArrayList;
 import java.util.List;

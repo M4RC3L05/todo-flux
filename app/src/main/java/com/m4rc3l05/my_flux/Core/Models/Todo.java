@@ -1,4 +1,4 @@
-package com.m4rc3l05.my_flux.Models;
+package com.m4rc3l05.my_flux.Core.Models;
 
 public class Todo {
     private String _id;

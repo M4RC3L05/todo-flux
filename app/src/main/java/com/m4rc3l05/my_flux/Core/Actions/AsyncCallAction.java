@@ -1,13 +1,13 @@
-package com.m4rc3l05.my_flux.Actions;
+package com.m4rc3l05.my_flux.Core.Actions;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 
-import com.m4rc3l05.my_flux.DBHelper;
-import com.m4rc3l05.my_flux.Dispatcher;
-import com.m4rc3l05.my_flux.Models.Todo;
-import com.m4rc3l05.my_flux.MyAdapter;
+import com.m4rc3l05.my_flux.DB.DBHelper;
+import com.m4rc3l05.my_flux.Core.Dispatcher;
+import com.m4rc3l05.my_flux.Core.Models.Todo;
+import com.m4rc3l05.my_flux.Adapters.TodosRecyclerViewAdapter;
 
 import java.util.List;
 
@@ -25,15 +25,15 @@ class FetchTodos extends AsyncTask<Context, Void, List<Todo>> {
 }
 public class AsyncCallAction implements AsyncAction {
     private Context ctx;
-    private MyAdapter mAdapter;
+    private TodosRecyclerViewAdapter mAdapter;
 
 
-    private AsyncCallAction(Context ctx, MyAdapter myAdapter) {
+    private AsyncCallAction(Context ctx, TodosRecyclerViewAdapter todosRecyclerViewAdapter) {
         this.ctx = ctx;
-        this.mAdapter = myAdapter;
+        this.mAdapter = todosRecyclerViewAdapter;
     }
 
-    public static AsyncCallAction create(Context ctx, MyAdapter mAdapter) {
+    public static AsyncCallAction create(Context ctx, TodosRecyclerViewAdapter mAdapter) {
         return new AsyncCallAction(ctx, mAdapter);
     }
 

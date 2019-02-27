@@ -1,4 +1,4 @@
-package com.m4rc3l05.my_flux.Actions;
+package com.m4rc3l05.my_flux.Core.Actions;
 
 public class ToggleDoneTodoAction implements BaseAction {
     public final String todoId;

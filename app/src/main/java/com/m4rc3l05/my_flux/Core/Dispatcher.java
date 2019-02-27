@@ -1,8 +1,8 @@
-package com.m4rc3l05.my_flux;
+package com.m4rc3l05.my_flux.Core;
 
-import com.m4rc3l05.my_flux.Actions.AsyncAction;
-import com.m4rc3l05.my_flux.Actions.BaseAction;
-import com.m4rc3l05.my_flux.Stores.IStore;
+import com.m4rc3l05.my_flux.Core.Actions.AsyncAction;
+import com.m4rc3l05.my_flux.Core.Actions.BaseAction;
+import com.m4rc3l05.my_flux.Core.Stores.IStore;
 
 import java.util.ArrayList;
 import java.util.List;

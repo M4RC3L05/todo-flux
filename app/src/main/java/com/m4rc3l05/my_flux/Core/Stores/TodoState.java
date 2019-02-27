@@ -1,6 +1,6 @@
-package com.m4rc3l05.my_flux.Stores;
+package com.m4rc3l05.my_flux.Core.Stores;
 
-import com.m4rc3l05.my_flux.Models.Todo;
+import com.m4rc3l05.my_flux.Core.Models.Todo;
 
 import java.util.List;
 

@@ -1,17 +1,12 @@
-package com.m4rc3l05.my_flux;
+package com.m4rc3l05.my_flux.Activities;
 
 
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,29 +15,26 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.transition.AutoTransition;
-import android.transition.TransitionManager;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.BounceInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.m4rc3l05.my_flux.Actions.AddTodoAction;
-import com.m4rc3l05.my_flux.Actions.AsyncCallAction;
-import com.m4rc3l05.my_flux.Actions.RemoveTodoAction;
-import com.m4rc3l05.my_flux.Actions.UndoRemoveTodoAction;
-import com.m4rc3l05.my_flux.Models.Todo;
-import com.m4rc3l05.my_flux.Stores.TodoState;
-import com.m4rc3l05.my_flux.Stores.TodoStore;
+import com.m4rc3l05.my_flux.Core.Actions.AddTodoAction;
+import com.m4rc3l05.my_flux.Core.Actions.AsyncCallAction;
+import com.m4rc3l05.my_flux.Core.Actions.RemoveTodoAction;
+import com.m4rc3l05.my_flux.Core.Actions.UndoRemoveTodoAction;
+import com.m4rc3l05.my_flux.DB.DBHelper;
+import com.m4rc3l05.my_flux.Core.Dispatcher;
+import com.m4rc3l05.my_flux.Core.IView;
+import com.m4rc3l05.my_flux.Core.Models.Todo;
+import com.m4rc3l05.my_flux.Adapters.TodosRecyclerViewAdapter;
+import com.m4rc3l05.my_flux.R;
+import com.m4rc3l05.my_flux.Core.Stores.TodoState;
+import com.m4rc3l05.my_flux.Core.Stores.TodoStore;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -55,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements IView {
     public Dispatcher dispatcher;
     public TodoStore todoStore;
     public RecyclerView recyclerView;
-    public MyAdapter mAdapter;
+    public TodosRecyclerViewAdapter mAdapter;
     public RecyclerView.LayoutManager layoutManager;
     public DBHelper dbHelper;
     public ProgressBar loadingTodosSpinner;
@@ -417,7 +409,7 @@ public class MainActivity extends AppCompatActivity implements IView {
         this.layoutManager = new LinearLayoutManager(this);
         this.recyclerView.setLayoutManager(this.layoutManager);
 
-        this.mAdapter = MyAdapter.create(new ArrayList<>(), this.dispatcher, this);
+        this.mAdapter = TodosRecyclerViewAdapter.create(new ArrayList<>(), this.dispatcher, this);
         this.recyclerView.setAdapter(this.mAdapter);
         // this.scrollTopBtn = findViewById(R.id.scrollTopBtn);
 

@@ -1,4 +1,4 @@
-package com.m4rc3l05.my_flux;
+package com.m4rc3l05.my_flux.Adapters;
 
 
 import android.app.Dialog;
@@ -19,26 +19,30 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-import com.m4rc3l05.my_flux.Actions.ToggleDoneTodoAction;
-import com.m4rc3l05.my_flux.Actions.UpdateTodoAction;
-import com.m4rc3l05.my_flux.Models.Todo;
+import com.m4rc3l05.my_flux.Core.Actions.ToggleDoneTodoAction;
+import com.m4rc3l05.my_flux.Core.Actions.UpdateTodoAction;
+import com.m4rc3l05.my_flux.Activities.MainActivity;
+import com.m4rc3l05.my_flux.DB.DBHelper;
+import com.m4rc3l05.my_flux.Core.Dispatcher;
+import com.m4rc3l05.my_flux.Core.Models.Todo;
+import com.m4rc3l05.my_flux.R;
 
 import java.util.List;
 import java.util.Objects;
 
-public class MyAdapter extends android.support.v7.widget.RecyclerView.Adapter<MyAdapter.MyViewHolder> {
+public class TodosRecyclerViewAdapter extends android.support.v7.widget.RecyclerView.Adapter<TodosRecyclerViewAdapter.MyViewHolder> {
     private List<Todo> _todos;
     private Dispatcher _dispatcher;
     private Context ctx;
 
-    private MyAdapter(List<Todo> todos, Dispatcher dispatcher, Context ctx) {
+    private TodosRecyclerViewAdapter(List<Todo> todos, Dispatcher dispatcher, Context ctx) {
         this._todos = todos;
         this._dispatcher = dispatcher;
         this.ctx = ctx;
     }
 
-    public static MyAdapter create(List<Todo> todos, Dispatcher dispatcher, Context ctx) {
-        return new MyAdapter(todos, dispatcher, ctx);
+    public static TodosRecyclerViewAdapter create(List<Todo> todos, Dispatcher dispatcher, Context ctx) {
+        return new TodosRecyclerViewAdapter(todos, dispatcher, ctx);
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -115,7 +119,7 @@ public class MyAdapter extends android.support.v7.widget.RecyclerView.Adapter<My
 
     @NonNull
     @Override
-    public MyAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public TodosRecyclerViewAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View tv = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.recycler_todo_item, viewGroup, false);
 

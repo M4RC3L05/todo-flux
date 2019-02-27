@@ -1,14 +1,13 @@
-package com.m4rc3l05.my_flux.Stores;
+package com.m4rc3l05.my_flux.Core.Stores;
 
-import com.m4rc3l05.my_flux.Actions.AddTodoAction;
-import com.m4rc3l05.my_flux.Actions.AsyncAction;
-import com.m4rc3l05.my_flux.Actions.BaseAction;
-import com.m4rc3l05.my_flux.Actions.InitTodosAction;
-import com.m4rc3l05.my_flux.Actions.RemoveTodoAction;
-import com.m4rc3l05.my_flux.Actions.ToggleDoneTodoAction;
-import com.m4rc3l05.my_flux.Actions.UndoRemoveTodoAction;
-import com.m4rc3l05.my_flux.Actions.UpdateTodoAction;
-import com.m4rc3l05.my_flux.Models.Todo;
+import com.m4rc3l05.my_flux.Core.Actions.AddTodoAction;
+import com.m4rc3l05.my_flux.Core.Actions.BaseAction;
+import com.m4rc3l05.my_flux.Core.Actions.InitTodosAction;
+import com.m4rc3l05.my_flux.Core.Actions.RemoveTodoAction;
+import com.m4rc3l05.my_flux.Core.Actions.ToggleDoneTodoAction;
+import com.m4rc3l05.my_flux.Core.Actions.UndoRemoveTodoAction;
+import com.m4rc3l05.my_flux.Core.Actions.UpdateTodoAction;
+import com.m4rc3l05.my_flux.Core.Models.Todo;
 
 import java.util.ArrayList;
 import java.util.List;
