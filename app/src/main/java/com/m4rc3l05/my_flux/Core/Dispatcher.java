@@ -10,14 +10,12 @@ import java.util.List;
 public class Dispatcher {
     private final List<IStore> _stores;
 
-    private static final Dispatcher instance = new Dispatcher();
-
     private Dispatcher() {
         this._stores = new ArrayList<IStore>();
     }
 
-    public static Dispatcher getInstance() {
-        return instance;
+    public static Dispatcher create() {
+        return new Dispatcher();
     }
 
     public void subscribe(IStore store) {

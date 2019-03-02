@@ -23,6 +23,7 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.m4rc3l05.my_flux.Container;
 import com.m4rc3l05.my_flux.Core.Actions.AddTodoAction;
 import com.m4rc3l05.my_flux.Core.Actions.AsyncCallAction;
 import com.m4rc3l05.my_flux.Core.Actions.RemoveTodoAction;
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements IView {
         setContentView(R.layout.activity_main);
 
         this.dbHelper = DBHelper.create(this);
-        this.dispatcher = Dispatcher.getInstance();
+        this.dispatcher = Container.dispatcher;
         this.todoStore = TodoStore.getInstance();
         dispatcher.subscribe(todoStore);
         todoStore.subscribe(this);
