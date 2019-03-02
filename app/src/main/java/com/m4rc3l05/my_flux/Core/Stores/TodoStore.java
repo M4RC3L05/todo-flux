@@ -15,20 +15,18 @@ import java.util.List;
 public class TodoStore extends Store {
 
     private TodoState state;
-    private static final TodoStore ourInstance = new TodoStore();
-
-    public static TodoStore getInstance() {
-        return ourInstance;
-    }
 
     private TodoStore() {
         this.state = TodoState.create(new ArrayList<>(), true);
     }
 
+    public static TodoStore create() {
+        return new TodoStore();
+    }
+
     public TodoState getState() {
         return this.state;
     }
-
 
     @Override
     public void onDispath(BaseAction action) {

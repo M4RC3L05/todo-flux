@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements IView {
 
         this.dbHelper = DBHelper.create(this);
         this.dispatcher = Container.dispatcher;
-        this.todoStore = TodoStore.getInstance();
+        this.todoStore = Container.todoStore;
         dispatcher.subscribe(todoStore);
         todoStore.subscribe(this);
 
