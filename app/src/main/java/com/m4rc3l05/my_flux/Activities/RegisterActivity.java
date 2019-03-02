@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class LoginActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
+
     TextView authFrasesDisplay;
-    Button btnLogin;
-    TextView txtLoginSwitch;
+    Button btnRegister;
 
     List<AuthFrase> authFrazes;
     Timer authFrasesTimer;
@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
 
         this.authFrazes = new ArrayList<>();
         this.authFrazes
@@ -87,14 +87,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         }, 0, 5000);
 
-        this.btnLogin.setOnClickListener(e -> {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        });
-
-        this.txtLoginSwitch.setOnClickListener(e -> {
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+        this.btnRegister.setOnClickListener(e -> {
+            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         });
@@ -108,7 +102,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setUpUI() {
         this.authFrasesDisplay = findViewById(R.id.authFrasesDisplay);
-        this.btnLogin = findViewById(R.id.btnLogin);
-        this.txtLoginSwitch = findViewById(R.id.txtLoginSwitch);
+        this.btnRegister = findViewById(R.id.btnRegister);
     }
 }

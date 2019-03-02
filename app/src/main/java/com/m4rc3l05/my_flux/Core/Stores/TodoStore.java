@@ -12,76 +12,73 @@ import com.m4rc3l05.my_flux.Core.Models.Todo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TodoStore extends Store {
-
-    private TodoState state;
+public class TodoStore extends Store<TodoState> {
 
     private TodoStore() {
-        this.state = TodoState.create(new ArrayList<>(), true);
+        super();
     }
 
     public static TodoStore create() {
         return new TodoStore();
     }
 
-    public TodoState getState() {
-        return this.state;
+    @Override
+    protected TodoState getInitialState() {
+        return TodoState.create(new ArrayList<>(), true);
     }
 
     @Override
-    public void onDispath(BaseAction action) {
+    public TodoState reduce(TodoState state, BaseAction action) {
 
         if (action instanceof AddTodoAction) {
             List<Todo> tmpTodos = new ArrayList<>();
             tmpTodos.add(((AddTodoAction) action).todo);
-            tmpTodos.addAll(this.state.todos);
+            tmpTodos.addAll(this._state.todos);
 
-            this.state = TodoState.create(tmpTodos, this.state.isLoading);
+            return TodoState.create(tmpTodos, this._state.isLoading);
 
         } else if (action instanceof RemoveTodoAction) {
             List<Todo> tmpTodos = new ArrayList<>();
 
-            for (Todo t: this.state.todos) {
+            for (Todo t: this._state.todos) {
                 if (t.get_id().equals(((RemoveTodoAction) action).todoId)) continue;
                 tmpTodos.add(t);
             }
-            this.state = TodoState.create(tmpTodos, this.state.isLoading);
+            return TodoState.create(tmpTodos, this._state.isLoading);
 
         } else if (action instanceof UndoRemoveTodoAction) {
-            List<Todo> tmpTodos = new ArrayList<>(this.state.todos);
+            List<Todo> tmpTodos = new ArrayList<>(this._state.todos);
 
             if (tmpTodos.size() <= 0)
                 tmpTodos.add(((UndoRemoveTodoAction) action).todo);
             else
                 tmpTodos.add(((UndoRemoveTodoAction) action).pos, ((UndoRemoveTodoAction) action).todo);
 
-            this.state = TodoState.create(tmpTodos,this.state.isLoading);
+            return TodoState.create(tmpTodos,this._state.isLoading);
         } else if (action instanceof ToggleDoneTodoAction) {
             List<Todo> tmpTodos = new ArrayList<Todo>();
 
-            for (Todo t: this.state.todos) {
+            for (Todo t: this._state.todos) {
                 if (t.get_id().equals(((ToggleDoneTodoAction) action).todoId)) {
                     Todo newT = Todo.create(t.get_id(), t.get_text(), !t.is_isDone(), t.get_timestamp());
                     tmpTodos.add(newT);
                 } else tmpTodos.add(t);
             }
 
-            this.state = TodoState.create(tmpTodos,this.state.isLoading);
+            return TodoState.create(tmpTodos, this._state.isLoading);
 
         } else if(action instanceof UpdateTodoAction) {
             List<Todo> tmpTodos = new ArrayList<Todo>();
 
-            for (Todo t: this.state.todos) {
+            for (Todo t: this._state.todos) {
                 if (t.get_id().equals(((UpdateTodoAction) action).refId)) {
                     tmpTodos.add(((UpdateTodoAction) action).newTodo);
                 } else tmpTodos.add(t);
             }
 
-            this.state = TodoState.create(tmpTodos,this.state.isLoading);
+            return TodoState.create(tmpTodos,this._state.isLoading);
         } else if(action instanceof InitTodosAction) {
-            this.state = TodoState.create(((InitTodosAction) action).todos,false);
-        } else return;
-
-        this._notify();
+            return TodoState.create(((InitTodosAction) action).todos,false);
+        } else return this._state;
     }
 }
