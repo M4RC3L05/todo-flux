@@ -62,16 +62,18 @@ public class MainActivity extends AppCompatActivity implements IView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        this.setUpDependencies();
+        this.setUpUI();
+        this.setUpListeners();
+
+        this.dispatcher.dispatch(AsyncCallAction.create(this, this.mAdapter));
+        this.render();
+    }
+
+    private void setUpDependencies() {
         this.dbHelper = DBHelper.create(this);
         this.dispatcher = Container.dispatcher;
         this.todoStore = Container.todoStore;
-        dispatcher.subscribe(todoStore);
-        todoStore.subscribe(this);
-
-        this.setUpUI();
-        this.setUpListeners();
-        this.dispatcher.dispatch(AsyncCallAction.create(this, this.mAdapter));
-        this.render();
     }
 
     private void setUpListeners() {
@@ -433,6 +435,20 @@ public class MainActivity extends AppCompatActivity implements IView {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(newTodoTextInput.getWindowToken(), 0);
         this.recyclerView.smoothScrollToPosition(0);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.dispatcher.unsubscribe(todoStore);
+        this.todoStore.unsubscribe(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.dispatcher.subscribe(todoStore);
+        this.todoStore.subscribe(this);
     }
 
     public void render() {

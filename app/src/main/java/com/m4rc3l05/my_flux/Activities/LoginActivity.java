@@ -30,6 +30,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        this.setUpDependencies();
+        this.setUpUI();
+        this.setUpListeners();
+    }
+
+    private void setUpDependencies() {
         this.authFrazes = new ArrayList<>();
         this.authFrazes
                 .add(AuthFrase.create("Manage tasks", "#FF4DD9"));
@@ -39,9 +45,6 @@ public class LoginActivity extends AppCompatActivity {
                 .add(AuthFrase.create("Personal to-do keeper","#F5D22A"));
         this.authFrazes
                 .add(AuthFrase.create("Save you thoughts", "#1DB954"));
-
-        this.setUpUI();
-        this.setUpListeners();
     }
 
     private void setUpListeners() {

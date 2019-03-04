@@ -49,12 +49,6 @@ public class RegisterActivity extends AppCompatActivity implements IView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.dispatcher = Container.dispatcher;
-        this.authStore = Container.authStore;
-
-        this.authStore.subscribe(this);
-        this.dispatcher.subscribe(authStore);
-
         /*FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
@@ -65,6 +59,13 @@ public class RegisterActivity extends AppCompatActivity implements IView {
 
         setContentView(R.layout.activity_register);
 
+        this.setUpDependencies();
+        this.setUpUI();
+        this.setUpListeners();
+        this.render();
+    }
+
+    private void setUpDependencies() {
         this.authFrazes = new ArrayList<>();
         this.authFrazes
                 .add(AuthFrase.create("Manage tasks", "#FF4DD9"));
@@ -75,15 +76,15 @@ public class RegisterActivity extends AppCompatActivity implements IView {
         this.authFrazes
                 .add(AuthFrase.create("Save you thoughts", "#1DB954"));
 
-        this.setUpUI();
-        this.setUpListeners();
+        this.dispatcher = Container.dispatcher;
+        this.authStore = Container.authStore;
+
+        this.authFrasesTimer = new Timer();
     }
 
     private void setUpListeners() {
 
-        authFrasesTimer = new Timer();
-
-        authFrasesTimer.scheduleAtFixedRate(new TimerTask() {
+        this.authFrasesTimer.scheduleAtFixedRate(new TimerTask() {
             private int curr = 0;
 
             @Override
@@ -123,7 +124,7 @@ public class RegisterActivity extends AppCompatActivity implements IView {
         }, 0, 5000);
 
         this.btnRegister.setOnClickListener(e -> {
-            this.dispatcher.dispatch(StartAuthAction.create());
+            /* this.dispatcher.dispatch(StartAuthAction.create());
 
             String email = this.emailInput.getText().toString();
             String password = this.passwordInput.getText().toString();
@@ -137,17 +138,29 @@ public class RegisterActivity extends AppCompatActivity implements IView {
                         } else {
                             this.dispatcher.dispatch(AuthUserChangeAction.create(fAuth.getCurrentUser()));
                         }
-                    });
+                    });*/
+            this._goToTodosActivity();
         });
-
-
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        authFrasesTimer.cancel();
+        this.authFrasesTimer.cancel();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.authStore.unsubscribe(this);
+        this.dispatcher.unsubscribe(this.authStore);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.authStore.subscribe(this);
+        this.dispatcher.subscribe(this.authStore);
     }
 
     private void setUpUI() {
