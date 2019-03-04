@@ -1,11 +1,13 @@
 package com.m4rc3l05.my_flux.core.actions.asyncActions;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.m4rc3l05.my_flux.ConnectionUtils;
 import com.m4rc3l05.my_flux.core.actions.InitTodosAction;
 import com.m4rc3l05.my_flux.core.actions.StartPerformTodoAction;
 import com.m4rc3l05.my_flux.core.Dispatcher;
@@ -24,19 +26,22 @@ import java.util.Map;
 
 public class PerformFetchAllTodos extends BaseAsyncAction {
     private DatabaseReference databaseReference;
+    private Context ctx;
 
 
-    private PerformFetchAllTodos(DatabaseReference databaseReference) {
+    private PerformFetchAllTodos(Context ctx, DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
+        this.ctx = ctx;
     }
 
-    public static PerformFetchAllTodos create(DatabaseReference databaseReference) {
-        return new PerformFetchAllTodos(databaseReference);
+    public static PerformFetchAllTodos create(Context ctx, DatabaseReference databaseReference) {
+        return new PerformFetchAllTodos(ctx, databaseReference);
     }
 
     @Override
     public void doWork(Dispatcher dispatcher) {
-        dispatcher.dispatch(StartPerformTodoAction.create());
+        if (ConnectionUtils.isConnected(ctx)) dispatcher.dispatch(StartPerformTodoAction.create());
+
         this.databaseReference
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

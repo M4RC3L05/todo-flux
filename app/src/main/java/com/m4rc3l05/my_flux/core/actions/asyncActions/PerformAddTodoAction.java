@@ -27,7 +27,7 @@ public class PerformAddTodoAction extends BaseAsyncAction {
 
     @Override
     public void doWork(Dispatcher dispatcher) {
-        dispatcher.dispatch(StartPerformTodoAction.create());
+        if (ConnectionUtils.isConnected(ctx)) dispatcher.dispatch(StartPerformTodoAction.create());
 
         this.databaseReference
                 .child(todo.get_id())

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -34,6 +36,7 @@ import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformAddTodoAction;
 import com.m4rc3l05.my_flux.core.stores.AuthStore;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.IView;
+import com.m4rc3l05.my_flux.core.stores.states.AuthState;
 import com.m4rc3l05.my_flux.models.Todo;
 import com.m4rc3l05.my_flux.adapters.TodosRecyclerViewAdapter;
 import com.m4rc3l05.my_flux.R;
@@ -61,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements IView {
     public DatabaseReference databaseReference;
     ProgressBar loaderIndicatorTodoAction;
     TextView btnAddTodoText;
+    ImageButton btnAuthProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,11 +76,9 @@ public class MainActivity extends AppCompatActivity implements IView {
         this.setUpListeners();
 
         this.dispatcher.dispatch(
-                PerformFetchAllTodos.create(this.databaseReference)
+                PerformFetchAllTodos.create(getApplicationContext(), this.databaseReference)
                 .subscribe(success -> mAdapter.notifyDataSetChanged())
         );
-
-        System.out.println(authStore.getState().authUser.getPhotoUrl());
 
         this.render();
     }
@@ -176,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements IView {
         this.addNewTodoBtn = findViewById(R.id.btn_addTodo);
         this.loaderIndicatorTodoAction = findViewById(R.id.loaderIndicatorTodoAction);
         this.btnAddTodoText = findViewById(R.id.btnAddTodoText);
+        this.btnAuthProfile = findViewById(R.id.btnAuthProfile);
 
         // this.recyclerView.setHasFixedSize(true);
         this.layoutManager = new LinearLayoutManager(this);
@@ -234,6 +237,7 @@ public class MainActivity extends AppCompatActivity implements IView {
 
     public void render() {
         TodoState ts = this.todoStore.getState();
+        AuthState authState = this.authStore.getState();
 
         this.mAdapter.setItems(ts.todos);
 
@@ -245,6 +249,10 @@ public class MainActivity extends AppCompatActivity implements IView {
         this.loaderIndicatorTodoAction.setVisibility(ts.isPerformingAction ? View.VISIBLE : View.GONE);
         this.btnAddTodoText.setVisibility(ts.isPerformingAction ? View.GONE : View.VISIBLE);
 
-        this.addNewTodoBtn.setPadding(ts.isPerformingAction ? 0 : 8, 0, ts.isPerformingAction ? 8 : 0, 0);
+        if (authState.authUser.getPhotoUrl() == null) {
+            this.btnAuthProfile.setImageResource(R.drawable.ic_user);
+        } else {
+            this.btnAuthProfile.setImageURI(authState.authUser.getPhotoUrl());
+        }
     }
 }

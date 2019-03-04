@@ -26,7 +26,7 @@ public class PerformDeleteTodoAction extends BaseAsyncAction {
 
     @Override
     public void doWork(Dispatcher dispatcher) {
-        dispatcher.dispatch(StartPerformTodoAction.create());
+        if (ConnectionUtils.isConnected(ctx)) dispatcher.dispatch(StartPerformTodoAction.create());
 
         databaseReference
                 .child(todo.get_id())
