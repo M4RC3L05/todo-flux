@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.m4rc3l05.my_flux.Container;
 import com.m4rc3l05.my_flux.Core.Actions.AuthUserChangeAction;
+import com.m4rc3l05.my_flux.Core.Actions.PerformRegisterAction;
 import com.m4rc3l05.my_flux.Core.Actions.StartAuthAction;
 import com.m4rc3l05.my_flux.Core.Dispatcher;
 import com.m4rc3l05.my_flux.Core.IView;
@@ -36,6 +37,8 @@ public class RegisterActivity extends AppCompatActivity implements IView {
     EditText emailInput;
     EditText passwordInput;
     EditText usernameInput;
+    TextView txtRegisterSwitch;
+    TextView txtAuthErrorDisplay;
 
     List<AuthFrase> authFrazes;
     Timer authFrasesTimer;
@@ -49,19 +52,19 @@ public class RegisterActivity extends AppCompatActivity implements IView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null) {
-            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        }*/
-
         setContentView(R.layout.activity_register);
 
         this.setUpDependencies();
         this.setUpUI();
         this.setUpListeners();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            this.dispatcher.dispatch(AuthUserChangeAction.create(fAuth.getCurrentUser()));
+            return;
+        }
+
         this.render();
     }
 
@@ -124,22 +127,18 @@ public class RegisterActivity extends AppCompatActivity implements IView {
         }, 0, 5000);
 
         this.btnRegister.setOnClickListener(e -> {
-            /* this.dispatcher.dispatch(StartAuthAction.create());
+            this.dispatcher.dispatch(PerformRegisterAction.create(
+                    this.emailInput.getText().toString(),
+                    this.usernameInput.getText().toString(),
+                    this.passwordInput.getText().toString(),
+                    this.fAuth
+            ));
+        });
 
-            String email = this.emailInput.getText().toString();
-            String password = this.passwordInput.getText().toString();
-
-            fAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()){
-                            Objects.requireNonNull(fAuth.getCurrentUser())
-                                    .updateProfile((new UserProfileChangeRequest.Builder()).setDisplayName(usernameInput.getText().toString()).build())
-                                    .addOnCompleteListener(task1 -> this.dispatcher.dispatch(AuthUserChangeAction.create(fAuth.getCurrentUser())));
-                        } else {
-                            this.dispatcher.dispatch(AuthUserChangeAction.create(fAuth.getCurrentUser()));
-                        }
-                    });*/
-            this._goToTodosActivity();
+        this.txtRegisterSwitch.setOnClickListener(e -> {
+            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         });
     }
 
@@ -169,6 +168,8 @@ public class RegisterActivity extends AppCompatActivity implements IView {
         this.passwordInput = findViewById(R.id.passwordInput);
         this.emailInput = findViewById(R.id.emailInput);
         this.usernameInput = findViewById(R.id.usernameInput);
+        this.txtRegisterSwitch = findViewById(R.id.txtRegisterSwitch);
+        this.txtAuthErrorDisplay = findViewById(R.id.txtAuthErrorDisplay);
 
         this.fAuth = FirebaseAuth.getInstance();
     }
@@ -183,12 +184,17 @@ public class RegisterActivity extends AppCompatActivity implements IView {
     public void render() {
         AuthState authState = this.authStore.getState();
 
-        this.btnRegister.setActivated(!authState.isPerformAuth);
-
         if (!authState.isPerformAuth && authState.authUser != null) {
             this._goToTodosActivity();
             return;
         }
+
+        this.btnRegister.setEnabled(!authState.isPerformAuth);
+        this.usernameInput.setEnabled(!authState.isPerformAuth);
+        this.emailInput.setEnabled(!authState.isPerformAuth);
+        this.passwordInput.setEnabled(!authState.isPerformAuth);
+
+        txtAuthErrorDisplay.setText(authState.error);
 
     }
 }
