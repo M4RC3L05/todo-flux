@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.m4rc3l05.my_flux.Container;
+import com.m4rc3l05.my_flux.RootApp;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformDeleteTodoAction;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformFetchAllTodos;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformAddTodoAction;
@@ -75,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements IView {
                 .subscribe(success -> mAdapter.notifyDataSetChanged())
         );
 
+        System.out.println(authStore.getState().authUser.getPhotoUrl());
+
         this.render();
     }
 
@@ -83,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements IView {
         this.todoStore = Container.todoStore;
         this.authStore = Container.authStore;
         this.fDatabase = FirebaseDatabase.getInstance();
-        this.fDatabase.setPersistenceEnabled(true);
         this.databaseReference = this.fDatabase.getReference("todos").child(authStore.getState().authUser.getUid());
         this.databaseReference.keepSynced(true);
     }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.m4rc3l05.my_flux.Container;
+import com.m4rc3l05.my_flux.RootApp;
 import com.m4rc3l05.my_flux.core.actions.AuthUserChangeAction;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformRegisterAction;
 import com.m4rc3l05.my_flux.core.Dispatcher;
