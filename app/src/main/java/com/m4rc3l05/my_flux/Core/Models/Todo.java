@@ -1,10 +1,10 @@
 package com.m4rc3l05.my_flux.Core.Models;
 
 public class Todo {
-    private String _id;
-    private String _text;
-    private boolean _isDone;
-    private String _timestamp;
+    private final String _id;
+    private final String _text;
+    private final boolean _isDone;
+    private final String _timestamp;
 
     private Todo(String id, String text, boolean isDone, String timestamp) {
         this._text = text;
@@ -31,9 +31,5 @@ public class Todo {
 
     public boolean is_isDone() {
         return _isDone;
-    }
-
-    public void set_isDone(boolean _isDone) {
-        this._isDone = _isDone;
     }
 }

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1090877968113",
+    "firebase_url": "https://todo-flux-3b235.firebaseio.com",
+    "project_id": "todo-flux-3b235",
+    "storage_bucket": "todo-flux-3b235.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1090877968113:android:28d81d7ef4fc04ea",
+        "android_client_info": {
+          "package_name": "com.m4rc3l05.my_flux"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1090877968113-lstjuc65atnfjsp0a1nhjhhcgpaq4ibe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.m4rc3l05.my_flux",
+            "certificate_hash": "1497b958ef3e7da70f55973370670fa5211a31f3"
+          }
+        },
+        {
+          "client_id": "1090877968113-fg8gh6ac260u1r4hk2dm4drgbtlmi998.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYvZs94nXLuMpNM034KMPHnOEUTclNMXo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1090877968113-fg8gh6ac260u1r4hk2dm4drgbtlmi998.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

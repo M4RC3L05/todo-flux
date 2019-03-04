@@ -1,5 +1,7 @@
 package com.m4rc3l05.my_flux.Core.Stores;
 
+import android.view.View;
+
 import com.m4rc3l05.my_flux.Core.Actions.BaseAction;
 import com.m4rc3l05.my_flux.Core.IView;
 
@@ -8,7 +10,7 @@ import java.util.List;
 
 public abstract class Store<T> {
 
-    private final List<IView> _views;
+    public final List<IView> _views;
     protected T _state;
 
     protected Store() {
@@ -16,17 +18,13 @@ public abstract class Store<T> {
         this._state = this.getInitialState();
     }
 
-    protected T getInitialState() {
-        return null;
-    }
+    protected abstract T getInitialState();
 
     public T getState() {
         return this._state;
     }
 
-    protected T reduce(T state, BaseAction action) {
-        return state;
-    }
+    protected abstract T reduce(T state, BaseAction action);
 
     private void _notify() {
         for (IView v: this._views) {
@@ -39,6 +37,10 @@ public abstract class Store<T> {
         if(this._views.contains(view)) return;
 
         this._views.add(view);
+    }
+
+    public void unsubscribe(IView cls) {
+        this._views.remove(cls);
     }
 
     public void onDispatch(BaseAction action) {
