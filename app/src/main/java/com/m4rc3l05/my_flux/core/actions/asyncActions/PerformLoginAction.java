@@ -6,7 +6,7 @@ import com.m4rc3l05.my_flux.core.actions.AuthUserChangeAction;
 import com.m4rc3l05.my_flux.core.actions.StartAuthAction;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 
-public class PerformLoginAction implements AsyncAction {
+public class PerformLoginAction extends BaseAsyncAction {
     private final String email;
     private final String password;
     private final FirebaseAuth fAuth;

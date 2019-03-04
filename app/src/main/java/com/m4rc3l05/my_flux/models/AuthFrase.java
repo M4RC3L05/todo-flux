@@ -1,4 +1,4 @@
-package com.m4rc3l05.my_flux.core.models;
+package com.m4rc3l05.my_flux.models;
 
 public class AuthFrase {
     public final String msg;

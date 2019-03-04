@@ -7,7 +7,7 @@ import com.m4rc3l05.my_flux.ConnectionUtils;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.actions.StartPerformTodoAction;
 import com.m4rc3l05.my_flux.core.actions.UpdateTodoAction;
-import com.m4rc3l05.my_flux.core.models.Todo;
+import com.m4rc3l05.my_flux.models.Todo;
 
 public class PerformUpdateTodoAction extends BaseAsyncAction {
     private final Todo todo;

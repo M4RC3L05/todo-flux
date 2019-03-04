@@ -19,14 +19,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.m4rc3l05.my_flux.Container;
-import com.m4rc3l05.my_flux.core.actions.UpdateTodoAction;
 import com.m4rc3l05.my_flux.activities.MainActivity;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformUpdateTodoAction;
 import com.m4rc3l05.my_flux.core.Dispatcher;
-import com.m4rc3l05.my_flux.core.models.Todo;
+import com.m4rc3l05.my_flux.models.Todo;
 import com.m4rc3l05.my_flux.R;
 
 import java.util.List;
@@ -105,13 +103,14 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
                                 .subscribe(success -> {
                                     if (!success) return;
 
-                                    todoText.setText("");
                                     notifyItemChanged(getAdapterPosition());
-                                    InputMethodManager imm = (InputMethodManager) ctx.getSystemService(Context.INPUT_METHOD_SERVICE);
-                                    imm.hideSoftInputFromWindow((Objects.requireNonNull(((MainActivity) ctx).getCurrentFocus())).getWindowToken(), 0);
-                                    d.cancel();
                                 })
                     );
+
+                    todoText.setText("");
+                    InputMethodManager imm = (InputMethodManager) ctx.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow((Objects.requireNonNull(((MainActivity) ctx).getCurrentFocus())).getWindowToken(), 0);
+                    d.cancel();
 
                 });
 

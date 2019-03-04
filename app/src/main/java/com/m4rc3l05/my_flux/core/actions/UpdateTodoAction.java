@@ -1,8 +1,8 @@
 package com.m4rc3l05.my_flux.core.actions;
 
-import com.m4rc3l05.my_flux.core.models.Todo;
+import com.m4rc3l05.my_flux.models.Todo;
 
-public class UpdateTodoAction implements BaseAction {
+public class UpdateTodoAction extends BaseAction {
     public final Todo newTodo;
     public final String refId;
 

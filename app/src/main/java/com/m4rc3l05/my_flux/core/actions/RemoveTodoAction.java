@@ -1,6 +1,6 @@
 package com.m4rc3l05.my_flux.core.actions;
 
-public class RemoveTodoAction implements BaseAction {
+public class RemoveTodoAction extends BaseAction {
     public final String todoId;
 
     private RemoveTodoAction(String todoId) {

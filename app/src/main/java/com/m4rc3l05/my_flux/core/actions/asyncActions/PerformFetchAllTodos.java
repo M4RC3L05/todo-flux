@@ -1,20 +1,15 @@
 package com.m4rc3l05.my_flux.core.actions.asyncActions;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.m4rc3l05.my_flux.core.actions.BaseAction;
 import com.m4rc3l05.my_flux.core.actions.InitTodosAction;
 import com.m4rc3l05.my_flux.core.actions.StartPerformTodoAction;
 import com.m4rc3l05.my_flux.core.Dispatcher;
-import com.m4rc3l05.my_flux.core.models.Todo;
-import com.m4rc3l05.my_flux.adapters.TodosRecyclerViewAdapter;
+import com.m4rc3l05.my_flux.models.Todo;
 
 import org.json.JSONArray;
 import org.json.JSONException;

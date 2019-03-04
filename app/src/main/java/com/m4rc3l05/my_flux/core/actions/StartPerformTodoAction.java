@@ -1,6 +1,6 @@
 package com.m4rc3l05.my_flux.core.actions;
 
-public class StartPerformTodoAction implements BaseAction {
+public class StartPerformTodoAction extends BaseAction {
 
     private StartPerformTodoAction() {
 

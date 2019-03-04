@@ -7,11 +7,7 @@ import com.m4rc3l05.my_flux.ConnectionUtils;
 import com.m4rc3l05.my_flux.core.actions.AddTodoAction;
 import com.m4rc3l05.my_flux.core.actions.StartPerformTodoAction;
 import com.m4rc3l05.my_flux.core.Dispatcher;
-import com.m4rc3l05.my_flux.core.models.Todo;
-
-
-import java.sql.Timestamp;
-import java.util.UUID;
+import com.m4rc3l05.my_flux.models.Todo;
 
 public class PerformAddTodoAction extends BaseAsyncAction {
 

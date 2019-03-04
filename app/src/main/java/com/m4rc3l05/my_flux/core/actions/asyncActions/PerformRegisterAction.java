@@ -9,7 +9,7 @@ import com.m4rc3l05.my_flux.core.Dispatcher;
 
 import java.util.Objects;
 
-public class PerformRegisterAction implements AsyncAction {
+public class PerformRegisterAction extends BaseAsyncAction {
 
     private final String email;
     private final String username;

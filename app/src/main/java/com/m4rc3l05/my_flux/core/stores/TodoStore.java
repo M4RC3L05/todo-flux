@@ -8,7 +8,8 @@ import com.m4rc3l05.my_flux.core.actions.RemoveTodoAction;
 import com.m4rc3l05.my_flux.core.actions.StartPerformTodoAction;
 import com.m4rc3l05.my_flux.core.actions.UndoRemoveTodoAction;
 import com.m4rc3l05.my_flux.core.actions.UpdateTodoAction;
-import com.m4rc3l05.my_flux.core.models.Todo;
+import com.m4rc3l05.my_flux.models.Todo;
+import com.m4rc3l05.my_flux.core.stores.states.TodoState;
 
 import java.util.ArrayList;
 import java.util.List;

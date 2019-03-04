@@ -16,8 +16,8 @@ import com.m4rc3l05.my_flux.core.actions.AuthUserChangeAction;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformLoginAction;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.IView;
-import com.m4rc3l05.my_flux.core.models.AuthFrase;
-import com.m4rc3l05.my_flux.core.stores.AuthState;
+import com.m4rc3l05.my_flux.models.AuthFrase;
+import com.m4rc3l05.my_flux.core.stores.states.AuthState;
 import com.m4rc3l05.my_flux.core.stores.AuthStore;
 import com.m4rc3l05.my_flux.R;
 

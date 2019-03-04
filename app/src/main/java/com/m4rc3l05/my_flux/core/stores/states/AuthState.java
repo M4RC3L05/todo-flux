@@ -1,4 +1,4 @@
-package com.m4rc3l05.my_flux.core.stores;
+package com.m4rc3l05.my_flux.core.stores.states;
 
 import com.google.firebase.auth.FirebaseUser;
 

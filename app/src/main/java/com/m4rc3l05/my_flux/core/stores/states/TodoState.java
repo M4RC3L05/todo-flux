@@ -1,6 +1,6 @@
-package com.m4rc3l05.my_flux.core.stores;
+package com.m4rc3l05.my_flux.core.stores.states;
 
-import com.m4rc3l05.my_flux.core.models.Todo;
+import com.m4rc3l05.my_flux.models.Todo;
 
 import java.util.List;
 

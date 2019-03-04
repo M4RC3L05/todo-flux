@@ -1,9 +1,11 @@
 package com.m4rc3l05.my_flux.core.actions.asyncActions;
 
+import com.m4rc3l05.my_flux.core.actions.BaseAction;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseAsyncAction implements AsyncAction {
+public abstract class BaseAsyncAction extends BaseAction implements AsyncAction {
     protected List<AsyncActionSubscription> listeners;
     protected boolean hasNotify;
 

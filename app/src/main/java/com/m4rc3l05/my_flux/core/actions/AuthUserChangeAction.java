@@ -2,7 +2,7 @@ package com.m4rc3l05.my_flux.core.actions;
 
 import com.google.firebase.auth.FirebaseUser;
 
-public class AuthUserChangeAction implements BaseAction {
+public class AuthUserChangeAction extends BaseAction {
     public final FirebaseUser user;
 
     private AuthUserChangeAction(FirebaseUser user) {

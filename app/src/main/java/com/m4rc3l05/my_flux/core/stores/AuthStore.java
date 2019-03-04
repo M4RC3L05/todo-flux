@@ -4,6 +4,7 @@ import com.m4rc3l05.my_flux.core.actions.AuthErrorAction;
 import com.m4rc3l05.my_flux.core.actions.AuthUserChangeAction;
 import com.m4rc3l05.my_flux.core.actions.BaseAction;
 import com.m4rc3l05.my_flux.core.actions.StartAuthAction;
+import com.m4rc3l05.my_flux.core.stores.states.AuthState;
 
 
 public class AuthStore extends Store<AuthState> {
