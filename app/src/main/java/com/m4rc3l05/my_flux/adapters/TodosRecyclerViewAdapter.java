@@ -19,9 +19,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-import com.m4rc3l05.my_flux.core.actions.ToggleDoneTodoAction;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.m4rc3l05.my_flux.Container;
 import com.m4rc3l05.my_flux.core.actions.UpdateTodoAction;
 import com.m4rc3l05.my_flux.activities.MainActivity;
+import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformUpdateTodoAction;
 import com.m4rc3l05.my_flux.db.DBHelper;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.models.Todo;
@@ -70,10 +73,17 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
             else this.textView.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
 
             this.view.setOnLongClickListener(v -> {
-                _dispatcher.dispatch(ToggleDoneTodoAction.create(todo.get_id()));
+                Todo updatedTodo = Todo.create(todo.get_id(), todo.get_text(), !todo.is_isDone(), todo.get_timestamp());
                 DBHelper dbHelper = DBHelper.create(ctx);
-                dbHelper.onToggleComplete(todo.get_id(), !todo.is_isDone());
-                notifyItemChanged(getAdapterPosition());
+
+                _dispatcher.dispatch(
+                        PerformUpdateTodoAction.create(updatedTodo, dbHelper, FirebaseDatabase.getInstance().getReference("todos").child(Container.authStore.getState().authUser.getUid()))
+                            .subscribe(success -> {
+                                if (!success) return;
+                                notifyItemChanged(getAdapterPosition());
+                            })
+                );
+
                 return true;
             });
 
@@ -92,14 +102,19 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
 
                     Todo updatedTodo = Todo.create(todo.get_id(), text, todo.is_isDone(), todo.get_timestamp());
 
-                    if (!((MainActivity) ctx).dbHelper.updateTodoText(updatedTodo)) return;
+                    _dispatcher.dispatch(
+                            PerformUpdateTodoAction.create(updatedTodo, DBHelper.create(ctx), FirebaseDatabase.getInstance().getReference("todos").child(Container.authStore.getState().authUser.getUid()))
+                                .subscribe(success -> {
+                                    if (!success) return;
 
-                    _dispatcher.dispatch(UpdateTodoAction.create(updatedTodo, todo.get_id()));
-                    todoText.setText("");
-                    notifyItemChanged(getAdapterPosition());
-                    InputMethodManager imm = (InputMethodManager) ctx.getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow((Objects.requireNonNull(((MainActivity) ctx).getCurrentFocus())).getWindowToken(), 0);
-                    d.cancel();
+                                    todoText.setText("");
+                                    notifyItemChanged(getAdapterPosition());
+                                    InputMethodManager imm = (InputMethodManager) ctx.getSystemService(Context.INPUT_METHOD_SERVICE);
+                                    imm.hideSoftInputFromWindow((Objects.requireNonNull(((MainActivity) ctx).getCurrentFocus())).getWindowToken(), 0);
+                                    d.cancel();
+                                })
+                    );
+
                 });
 
                 d.setContentView(view);

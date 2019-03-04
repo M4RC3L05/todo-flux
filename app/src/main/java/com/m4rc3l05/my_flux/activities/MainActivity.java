@@ -26,11 +26,9 @@ import android.widget.TextView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.m4rc3l05.my_flux.Container;
-import com.m4rc3l05.my_flux.core.actions.PerformDeleteTodoAction;
+import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformDeleteTodoAction;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformFetchAllTodos;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformAddTodoAction;
-import com.m4rc3l05.my_flux.core.actions.RemoveTodoAction;
-import com.m4rc3l05.my_flux.core.actions.UndoRemoveTodoAction;
 import com.m4rc3l05.my_flux.core.stores.AuthStore;
 import com.m4rc3l05.my_flux.db.DBHelper;
 import com.m4rc3l05.my_flux.core.Dispatcher;
@@ -40,6 +38,8 @@ import com.m4rc3l05.my_flux.adapters.TodosRecyclerViewAdapter;
 import com.m4rc3l05.my_flux.R;
 import com.m4rc3l05.my_flux.core.stores.TodoState;
 import com.m4rc3l05.my_flux.core.stores.TodoStore;
+
+import org.json.JSONObject;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -72,7 +72,14 @@ public class MainActivity extends AppCompatActivity implements IView {
         this.setUpUI();
         this.setUpListeners();
 
-        this.dispatcher.dispatch(PerformFetchAllTodos.create(this, this.mAdapter));
+        this.dispatcher.dispatch(
+                PerformFetchAllTodos.create(this)
+                    .subscribe(success -> {
+                        if (!success) return;
+
+                        mAdapter.notifyDataSetChanged();
+                    })
+        );
 
         this.render();
     }
@@ -392,6 +399,7 @@ public class MainActivity extends AppCompatActivity implements IView {
 
     public void onDeleteTodo(@NonNull RecyclerView.ViewHolder viewHolder) {
         Todo todo = mAdapter.getTodoAt(viewHolder.getAdapterPosition());
+
         int pos = viewHolder.getAdapterPosition();
 
         this.dispatcher.dispatch(

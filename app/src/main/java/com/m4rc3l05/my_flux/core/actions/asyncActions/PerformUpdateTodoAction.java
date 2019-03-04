@@ -1,45 +1,46 @@
-package com.m4rc3l05.my_flux.core.actions;
+package com.m4rc3l05.my_flux.core.actions.asyncActions;
 
 import com.google.firebase.database.DatabaseReference;
 import com.m4rc3l05.my_flux.core.Dispatcher;
-import com.m4rc3l05.my_flux.core.actions.asyncActions.BaseAsyncAction;
+import com.m4rc3l05.my_flux.core.actions.UpdateTodoAction;
 import com.m4rc3l05.my_flux.core.models.Todo;
 import com.m4rc3l05.my_flux.db.DBHelper;
 
-public class PerformDeleteTodoAction extends BaseAsyncAction {
+public class PerformUpdateTodoAction extends BaseAsyncAction {
     private final Todo todo;
-    private final DatabaseReference databaseReference;
     private final DBHelper dbHelper;
+    private final DatabaseReference databaseReference;
 
-    private PerformDeleteTodoAction(Todo todo, DatabaseReference databaseReference, DBHelper dbHelper) {
-        this.todo = todo;
+    private PerformUpdateTodoAction(Todo todo, DBHelper dbHelper, DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
         this.dbHelper = dbHelper;
+        this.todo = todo;
     }
 
-    public static PerformDeleteTodoAction create(Todo todo, DatabaseReference databaseReference, DBHelper dbHelper) {
-        return new PerformDeleteTodoAction(todo, databaseReference, dbHelper);
+    public static PerformUpdateTodoAction create(Todo todo, DBHelper dbHelper, DatabaseReference databaseReference) {
+        return new PerformUpdateTodoAction(todo, dbHelper, databaseReference);
     }
 
     @Override
     public void doWork(Dispatcher dispatcher) {
-        if (!dbHelper.deleteTodo(todo.get_id())) {
+
+        if (!dbHelper.updateTodo(todo)) {
             this.__notify(false);
             return;
         }
 
         databaseReference
                 .child(todo.get_id())
-                .setValue(null)
+                .setValue(todo)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        dispatcher.dispatch(RemoveTodoAction.create(todo.get_id()));
+                        dispatcher.dispatch(
+                                UpdateTodoAction.create(todo, todo.get_id())
+                        );
                         this.__notify(true);
                     } else {
                         this.__notify(false);
                     }
                 });
-
-        dispatcher.dispatch(RemoveTodoAction.create(todo.get_id()));
     }
 }

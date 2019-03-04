@@ -6,7 +6,6 @@ import com.m4rc3l05.my_flux.core.actions.InitTodosAction;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformAddTodoAction;
 import com.m4rc3l05.my_flux.core.actions.RemoveTodoAction;
 import com.m4rc3l05.my_flux.core.actions.StartPerformTodoAction;
-import com.m4rc3l05.my_flux.core.actions.ToggleDoneTodoAction;
 import com.m4rc3l05.my_flux.core.actions.UndoRemoveTodoAction;
 import com.m4rc3l05.my_flux.core.actions.UpdateTodoAction;
 import com.m4rc3l05.my_flux.core.models.Todo;
@@ -57,19 +56,7 @@ public class TodoStore extends Store<TodoState> {
                 tmpTodos.add(((UndoRemoveTodoAction) action).pos, ((UndoRemoveTodoAction) action).todo);
 
             return TodoState.create(tmpTodos,false, false);
-        } else if (action instanceof ToggleDoneTodoAction) {
-            List<Todo> tmpTodos = new ArrayList<Todo>();
-
-            for (Todo t: this._state.todos) {
-                if (t.get_id().equals(((ToggleDoneTodoAction) action).todoId)) {
-                    Todo newT = Todo.create(t.get_id(), t.get_text(), !t.is_isDone(), t.get_timestamp());
-                    tmpTodos.add(newT);
-                } else tmpTodos.add(t);
-            }
-
-            return TodoState.create(tmpTodos, false, false);
-
-        } else if(action instanceof UpdateTodoAction) {
+        }  else if(action instanceof UpdateTodoAction) {
             List<Todo> tmpTodos = new ArrayList<Todo>();
 
             for (Todo t: this._state.todos) {

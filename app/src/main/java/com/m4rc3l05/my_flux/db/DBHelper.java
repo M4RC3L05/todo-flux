@@ -66,6 +66,19 @@ public class DBHelper extends SQLiteOpenHelper {
         return res != -1;
     }
 
+    public boolean updateTodo(Todo todo) {
+        System.out.println("updating: " + todo.get_id());
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBHelper.COL__TEXT, todo.get_text());
+        contentValues.put(DBHelper.COL__IS_DONE, todo.is_isDone() ? 1 : 0);
+
+        long res = db.update(DBHelper.TABLE_NAME, contentValues, "id='" + todo.get_id() + "'", null);
+
+        return res != -1;
+    }
+
     public Cursor getTodos() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT *  FROM " + DBHelper.TABLE_NAME + " ORDER BY created_at DESC", null);
@@ -76,16 +89,6 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         long res = db.delete(DBHelper.TABLE_NAME, "id='" + id + "'", null);
-
-        return res != -1;
-    }
-
-    public boolean onToggleComplete(String todoId, boolean isDone) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DBHelper.COL__IS_DONE, isDone ? 1 : 0);
-
-        long res = db.update(DBHelper.TABLE_NAME, contentValues, "id='" + todoId + "'", null);
 
         return res != -1;
     }
@@ -104,6 +107,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public List<Todo> getAllTodos() {
         Cursor todosCursor = this.getTodos();
         List<Todo> todosFromDB = new ArrayList<>();
+
 
         while(todosCursor.moveToNext()) {
             todosFromDB.add(Todo.create(

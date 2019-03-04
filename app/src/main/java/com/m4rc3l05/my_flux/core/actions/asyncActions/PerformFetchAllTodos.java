@@ -4,19 +4,21 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 
+import com.m4rc3l05.my_flux.core.actions.BaseAction;
 import com.m4rc3l05.my_flux.core.actions.InitTodosAction;
+import com.m4rc3l05.my_flux.core.actions.StartPerformTodoAction;
 import com.m4rc3l05.my_flux.db.DBHelper;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.models.Todo;
 import com.m4rc3l05.my_flux.adapters.TodosRecyclerViewAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 
-public class PerformFetchAllTodos implements AsyncAction {
+public class PerformFetchAllTodos extends BaseAsyncAction {
     private Context ctx;
-    private TodosRecyclerViewAdapter mAdapter;
 
     private static class FetchTodos extends AsyncTask<Context, Void, List<Todo>> {
 
@@ -31,26 +33,24 @@ public class PerformFetchAllTodos implements AsyncAction {
     }
 
 
-    private PerformFetchAllTodos(Context ctx, TodosRecyclerViewAdapter todosRecyclerViewAdapter) {
+    private PerformFetchAllTodos(Context ctx) {
         this.ctx = ctx;
-        this.mAdapter = todosRecyclerViewAdapter;
     }
 
-    public static PerformFetchAllTodos create(Context ctx, TodosRecyclerViewAdapter mAdapter) {
-        return new PerformFetchAllTodos(ctx, mAdapter);
+    public static PerformFetchAllTodos create(Context ctx) {
+        return new PerformFetchAllTodos(ctx);
     }
-
-
 
     @Override
     public void doWork(Dispatcher dispatcher) {
+        dispatcher.dispatch(StartPerformTodoAction.create());
         new Handler().postDelayed(() -> {
             try {
                 List<Todo> todos = new PerformFetchAllTodos.FetchTodos().execute(ctx).get();
-                dispatcher.dispatch(InitTodosAction.create(todos));
-                mAdapter.notifyDataSetChanged();
+                dispatcher.dispatch(InitTodosAction.create(todos == null ? new ArrayList<>() : todos));
+                this.__notify(true);
             } catch(Exception e) {
-
+                this.__notify(false);
             }
         }, 2000);
     }
