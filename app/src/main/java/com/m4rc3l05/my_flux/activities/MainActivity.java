@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.m4rc3l05.my_flux.Container;
+import com.m4rc3l05.my_flux.core.actions.PerformDeleteTodoAction;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformFetchAllTodos;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformAddTodoAction;
 import com.m4rc3l05.my_flux.core.actions.RemoveTodoAction;
@@ -40,7 +41,9 @@ import com.m4rc3l05.my_flux.R;
 import com.m4rc3l05.my_flux.core.stores.TodoState;
 import com.m4rc3l05.my_flux.core.stores.TodoStore;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
@@ -391,23 +394,29 @@ public class MainActivity extends AppCompatActivity implements IView {
         Todo todo = mAdapter.getTodoAt(viewHolder.getAdapterPosition());
         int pos = viewHolder.getAdapterPosition();
 
-        if (!dbHelper.deleteTodo(todo.get_id())) return;
+        this.dispatcher.dispatch(
+            PerformDeleteTodoAction.create(todo, databaseReference, dbHelper)
+                .subscribe(success -> {
+                    if (!success) return;
+                    mAdapter.notifyItemRemoved(pos);
 
-        dispatcher.dispatch(RemoveTodoAction.create(todo.get_id()));
-        mAdapter.notifyItemRemoved(pos);
+                    Snackbar sb = Snackbar.make(findViewById(R.id.mainlayout), "Todo Deleted", Snackbar.LENGTH_LONG)
+                            .setAction("Undo", v -> {
+                                dispatcher.dispatch(
+                                        PerformAddTodoAction.create(todo, dbHelper, databaseReference)
+                                            .subscribe(success1 -> {
+                                                if (!success1) return;
+                                                mAdapter.notifyItemInserted(pos);
+                                            })
+                                );
+                            });
 
-        Snackbar sb = Snackbar.make(findViewById(R.id.mainlayout), "Todo Deleted", Snackbar.LENGTH_LONG)
-                .setAction("Undo", v -> {
+                    sb.getView().setBackgroundColor(Color.WHITE);
+                    ((TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.BLACK);
 
-                    if (!dbHelper.addNewTodo(todo)) return;
-                    dispatcher.dispatch(UndoRemoveTodoAction.create(todo, pos));
-                    mAdapter.notifyItemInserted(pos);
-                });
-
-        sb.getView().setBackgroundColor(Color.WHITE);
-        ((TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.BLACK);
-
-        sb.show();
+                    sb.show();
+                })
+        );
     }
 
     public void setUpUI() {
@@ -428,13 +437,17 @@ public class MainActivity extends AppCompatActivity implements IView {
     }
 
     public void onAddNewTodo() {
-        String text = newTodoTextInput.getText().toString();
+        String text = newTodoTextInput.getText().toString().trim();
+
+        if (text.trim().length() <= 0) return;
+
+        Todo todoToInsert = Todo.create(UUID.randomUUID().toString(), text, false, "" + new Timestamp(System.currentTimeMillis()).getTime());
 
         this
             .dispatcher
             .dispatch(
                 PerformAddTodoAction
-                    .create(MainActivity.this, text, dbHelper, databaseReference)
+                    .create(todoToInsert, dbHelper, databaseReference)
                     .subscribe(success -> {
                         if (!success) return;
 

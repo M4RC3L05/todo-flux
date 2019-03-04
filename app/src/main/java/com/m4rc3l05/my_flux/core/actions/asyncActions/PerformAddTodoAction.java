@@ -14,38 +14,35 @@ import java.util.UUID;
 
 public class PerformAddTodoAction extends BaseAsyncAction {
 
-    private final String todoText;
+    private final Todo todo;
     private final DBHelper dbHelper;
     private final DatabaseReference databaseReference;
-    private final Context context;
 
-    private PerformAddTodoAction(Context ctx, String todoText, DBHelper dbHelper, DatabaseReference databaseReference) {
-        this.todoText = todoText;
+    private PerformAddTodoAction(Todo todo, DBHelper dbHelper, DatabaseReference databaseReference) {
+        this.todo = todo;
         this.dbHelper = dbHelper;
         this.databaseReference = databaseReference;
-        this.context = ctx;
     }
 
-    public static PerformAddTodoAction create(Context ctx, String todoText, DBHelper dbHelper, DatabaseReference databaseReference) {
-        return new PerformAddTodoAction(ctx, todoText, dbHelper, databaseReference);
+    public static PerformAddTodoAction create(Todo todo, DBHelper dbHelper, DatabaseReference databaseReference) {
+        return new PerformAddTodoAction(todo, dbHelper, databaseReference);
     }
 
     @Override
     public void doWork(Dispatcher dispatcher) {
         dispatcher.dispatch(StartPerformTodoAction.create());
-        Todo todoToInsert = Todo.create(UUID.randomUUID().toString(), todoText, false, "" + new Timestamp(System.currentTimeMillis()).getTime());
 
-        if (!dbHelper.addNewTodo(todoToInsert)) return;
+        if (!dbHelper.addNewTodo(todo)) return;
 
         this.databaseReference
-                .child(todoToInsert.get_id())
-                .setValue(todoToInsert)
+                .child(todo.get_id())
+                .setValue(todo)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        dispatcher.dispatch(AddTodoAction.create(todoToInsert));
+                        dispatcher.dispatch(AddTodoAction.create(todo));
                         this.__notify(true);
                     } else {
-                        dbHelper.deleteTodo(todoToInsert.get_id());
+                        dbHelper.deleteTodo(todo.get_id());
                         this.__notify(false);
                     }
                 });
