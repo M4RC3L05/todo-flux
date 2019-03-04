@@ -3,11 +3,12 @@ package com.m4rc3l05.my_flux.core.actions.asyncActions;
 import android.content.Context;
 
 import com.google.firebase.database.DatabaseReference;
+import com.m4rc3l05.my_flux.ConnectionUtils;
 import com.m4rc3l05.my_flux.core.actions.AddTodoAction;
 import com.m4rc3l05.my_flux.core.actions.StartPerformTodoAction;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.models.Todo;
-import com.m4rc3l05.my_flux.db.DBHelper;
+
 
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -15,24 +16,22 @@ import java.util.UUID;
 public class PerformAddTodoAction extends BaseAsyncAction {
 
     private final Todo todo;
-    private final DBHelper dbHelper;
+    private final Context ctx;
     private final DatabaseReference databaseReference;
 
-    private PerformAddTodoAction(Todo todo, DBHelper dbHelper, DatabaseReference databaseReference) {
+    private PerformAddTodoAction(Context ctx, Todo todo, DatabaseReference databaseReference) {
         this.todo = todo;
-        this.dbHelper = dbHelper;
         this.databaseReference = databaseReference;
+        this.ctx = ctx;
     }
 
-    public static PerformAddTodoAction create(Todo todo, DBHelper dbHelper, DatabaseReference databaseReference) {
-        return new PerformAddTodoAction(todo, dbHelper, databaseReference);
+    public static PerformAddTodoAction create(Context ctx, Todo todo, DatabaseReference databaseReference) {
+        return new PerformAddTodoAction(ctx, todo, databaseReference);
     }
 
     @Override
     public void doWork(Dispatcher dispatcher) {
         dispatcher.dispatch(StartPerformTodoAction.create());
-
-        if (!dbHelper.addNewTodo(todo)) return;
 
         this.databaseReference
                 .child(todo.get_id())
@@ -42,9 +41,13 @@ public class PerformAddTodoAction extends BaseAsyncAction {
                         dispatcher.dispatch(AddTodoAction.create(todo));
                         this.__notify(true);
                     } else {
-                        dbHelper.deleteTodo(todo.get_id());
                         this.__notify(false);
                     }
                 });
+
+        if (!ConnectionUtils.isConnected(ctx)) {
+            dispatcher.dispatch(AddTodoAction.create(todo));
+            this.__notify(true);
+        }
     }
 }

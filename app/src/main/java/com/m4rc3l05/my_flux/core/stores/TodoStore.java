@@ -32,6 +32,9 @@ public class TodoStore extends Store<TodoState> {
     public TodoState reduce(TodoState state, BaseAction action) {
 
         if (action instanceof AddTodoAction) {
+
+            if (this._state.todos.contains(((AddTodoAction) action).todo)) return TodoState.create(this._state.todos, false, false);
+
             List<Todo> tmpTodos = new ArrayList<>();
             tmpTodos.add(((AddTodoAction) action).todo);
             tmpTodos.addAll(this._state.todos);

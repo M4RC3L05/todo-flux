@@ -1,32 +1,32 @@
 package com.m4rc3l05.my_flux.core.actions.asyncActions;
 
+import android.content.Context;
+
 import com.google.firebase.database.DatabaseReference;
+import com.m4rc3l05.my_flux.ConnectionUtils;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.actions.RemoveTodoAction;
+import com.m4rc3l05.my_flux.core.actions.StartPerformTodoAction;
 import com.m4rc3l05.my_flux.core.models.Todo;
-import com.m4rc3l05.my_flux.db.DBHelper;
 
 public class PerformDeleteTodoAction extends BaseAsyncAction {
     private final Todo todo;
     private final DatabaseReference databaseReference;
-    private final DBHelper dbHelper;
+    private final Context ctx;
 
-    private PerformDeleteTodoAction(Todo todo, DatabaseReference databaseReference, DBHelper dbHelper) {
+    private PerformDeleteTodoAction(Todo todo, DatabaseReference databaseReference, Context ctx) {
         this.todo = todo;
         this.databaseReference = databaseReference;
-        this.dbHelper = dbHelper;
+        this.ctx = ctx;
     }
 
-    public static PerformDeleteTodoAction create(Todo todo, DatabaseReference databaseReference, DBHelper dbHelper) {
-        return new PerformDeleteTodoAction(todo, databaseReference, dbHelper);
+    public static PerformDeleteTodoAction create(Todo todo, DatabaseReference databaseReference, Context ctx) {
+        return new PerformDeleteTodoAction(todo, databaseReference, ctx);
     }
 
     @Override
     public void doWork(Dispatcher dispatcher) {
-        if (!dbHelper.deleteTodo(todo.get_id())) {
-            this.__notify(false);
-            return;
-        }
+        dispatcher.dispatch(StartPerformTodoAction.create());
 
         databaseReference
                 .child(todo.get_id())
@@ -36,11 +36,13 @@ public class PerformDeleteTodoAction extends BaseAsyncAction {
                         dispatcher.dispatch(RemoveTodoAction.create(todo.get_id()));
                         this.__notify(true);
                     } else {
-                        dbHelper.addNewTodo(todo);
                         this.__notify(false);
                     }
                 });
 
-        dispatcher.dispatch(RemoveTodoAction.create(todo.get_id()));
+        if (!ConnectionUtils.isConnected(ctx)) {
+            dispatcher.dispatch(RemoveTodoAction.create(todo.get_id()));
+            this.__notify(true);
+        }
     }
 }

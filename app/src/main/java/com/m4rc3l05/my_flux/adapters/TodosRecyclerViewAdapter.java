@@ -25,7 +25,6 @@ import com.m4rc3l05.my_flux.Container;
 import com.m4rc3l05.my_flux.core.actions.UpdateTodoAction;
 import com.m4rc3l05.my_flux.activities.MainActivity;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformUpdateTodoAction;
-import com.m4rc3l05.my_flux.db.DBHelper;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.models.Todo;
 import com.m4rc3l05.my_flux.R;
@@ -74,10 +73,9 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
 
             this.view.setOnLongClickListener(v -> {
                 Todo updatedTodo = Todo.create(todo.get_id(), todo.get_text(), !todo.is_isDone(), todo.get_timestamp());
-                DBHelper dbHelper = DBHelper.create(ctx);
 
                 _dispatcher.dispatch(
-                        PerformUpdateTodoAction.create(updatedTodo, dbHelper, FirebaseDatabase.getInstance().getReference("todos").child(Container.authStore.getState().authUser.getUid()))
+                        PerformUpdateTodoAction.create(updatedTodo, ctx, FirebaseDatabase.getInstance().getReference("todos").child(Container.authStore.getState().authUser.getUid()))
                             .subscribe(success -> {
                                 if (!success) return;
                                 notifyItemChanged(getAdapterPosition());
@@ -103,7 +101,7 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
                     Todo updatedTodo = Todo.create(todo.get_id(), text, todo.is_isDone(), todo.get_timestamp());
 
                     _dispatcher.dispatch(
-                            PerformUpdateTodoAction.create(updatedTodo, DBHelper.create(ctx), FirebaseDatabase.getInstance().getReference("todos").child(Container.authStore.getState().authUser.getUid()))
+                            PerformUpdateTodoAction.create(updatedTodo, ctx, FirebaseDatabase.getInstance().getReference("todos").child(Container.authStore.getState().authUser.getUid()))
                                 .subscribe(success -> {
                                     if (!success) return;
 

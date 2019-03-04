@@ -23,14 +23,17 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.m4rc3l05.my_flux.Container;
+import com.m4rc3l05.my_flux.core.actions.InitTodosAction;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformDeleteTodoAction;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformFetchAllTodos;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformAddTodoAction;
 import com.m4rc3l05.my_flux.core.stores.AuthStore;
-import com.m4rc3l05.my_flux.db.DBHelper;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.IView;
 import com.m4rc3l05.my_flux.core.models.Todo;
@@ -39,10 +42,19 @@ import com.m4rc3l05.my_flux.R;
 import com.m4rc3l05.my_flux.core.stores.TodoState;
 import com.m4rc3l05.my_flux.core.stores.TodoStore;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
@@ -55,13 +67,11 @@ public class MainActivity extends AppCompatActivity implements IView {
     public RecyclerView recyclerView;
     public TodosRecyclerViewAdapter mAdapter;
     public RecyclerView.LayoutManager layoutManager;
-    public DBHelper dbHelper;
     public ProgressBar loadingTodosSpinner;
     public EditText newTodoTextInput;
     public FrameLayout addNewTodoBtn;
     public FirebaseDatabase fDatabase;
     public DatabaseReference databaseReference;
-    // public ImageButton scrollTopBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,24 +83,21 @@ public class MainActivity extends AppCompatActivity implements IView {
         this.setUpListeners();
 
         this.dispatcher.dispatch(
-                PerformFetchAllTodos.create(this)
-                    .subscribe(success -> {
-                        if (!success) return;
-
-                        mAdapter.notifyDataSetChanged();
-                    })
+                PerformFetchAllTodos.create(this.databaseReference)
+                .subscribe(success -> mAdapter.notifyDataSetChanged())
         );
 
         this.render();
     }
 
     private void setUpDependencies() {
-        this.dbHelper = DBHelper.create(this);
         this.dispatcher = Container.dispatcher;
         this.todoStore = Container.todoStore;
         this.authStore = Container.authStore;
         this.fDatabase = FirebaseDatabase.getInstance();
+        this.fDatabase.setPersistenceEnabled(true);
         this.databaseReference = this.fDatabase.getReference("todos").child(authStore.getState().authUser.getUid());
+        this.databaseReference.keepSynced(true);
     }
 
     private void setUpListeners() {
@@ -220,181 +227,14 @@ public class MainActivity extends AppCompatActivity implements IView {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
                 onDeleteTodo(viewHolder);
             }
+
+            @Override
+            public boolean isItemViewSwipeEnabled() {
+                return !todoStore.getState().isLoading && !todoStore.getState().isPerformingAction;
+            }
         });
 
         ith.attachToRecyclerView(this.recyclerView);
-
-        /* this.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            private boolean isAnimating = false;
-
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                if (newState == RecyclerView.SCROLL_STATE_IDLE && recyclerView.computeVerticalScrollOffset() < 80) {
-                    findViewById(R.id.cardViewAddTodoForm)
-                            .animate()
-                            .alpha(1)
-                            .setInterpolator(t -> {
-                                if ((t *= 2) < 1) {
-                                    return (float) (0.5 * Math.pow(t, 4));
-                                }
-
-                                return (float) (1 - 0.5 * Math.abs(Math.pow(2 - t, 4)));
-                            })
-                            .setDuration(500)
-                            .start();
-
-
-                    // scrollTopBtn.setVisibility(View.GONE);
-                    scrollTopBtn
-                            .animate()
-                            .scaleX(0f)
-                            .scaleY(0f)
-                            .setInterpolator(t -> {
-                                if ((t *= 2) < 1) {
-                                    return (float) (0.5 * Math.pow(t, 4));
-                                }
-
-                                return (float) (1 - 0.5 * Math.abs(Math.pow(2 - t, 4)));
-                            })
-                            .setListener(new AnimatorListenerAdapter() {
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-                                    super.onAnimationEnd(animation);
-                                    scrollTopBtn.setVisibility(View.GONE);
-                                }
-                            })
-                            .setDuration(500)
-                            .start();
-                } else {
-                    findViewById(R.id.cardViewAddTodoForm)
-                            .animate()
-                            .alpha(0)
-                            .setInterpolator(t -> {
-                                if ((t *= 2) < 1) {
-                                    return (float) (0.5 * Math.pow(t, 4));
-                                }
-
-                                return (float) (1 - 0.5 * Math.abs(Math.pow(2 - t, 4)));
-                            })
-                            .setListener(new Animator.AnimatorListener() {
-                                @Override
-                                public void onAnimationStart(Animator animation) {
-                                    isAnimating = true;
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-                                    isAnimating = false;
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
-                                }
-                            })
-                            .setDuration(500)
-                            .start();
-
-                    scrollTopBtn
-                            .animate()
-                            .scaleX(1f)
-                            .scaleY(1f)
-                            .setInterpolator(t -> {
-                                if ((t *= 2) < 1) {
-                                    return (float) (0.5 * Math.pow(t, 4));
-                                }
-
-                                return (float) (1 - 0.5 * Math.abs(Math.pow(2 - t, 4)));
-                            })
-                            .setListener(new AnimatorListenerAdapter() {
-                                @Override
-                                public void onAnimationStart(Animator animation) {
-                                    super.onAnimationStart(animation);
-                                    scrollTopBtn.setVisibility(View.VISIBLE);
-                                }
-                            })
-                            .setDuration(500)
-                            .start();
-                }
-            }
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                if (recyclerView.computeVerticalScrollOffset() >= 80 && !isAnimating && findViewById(R.id.cardViewAddTodoForm).getAlpha() != 0f) {
-
-                    findViewById(R.id.cardViewAddTodoForm)
-                            .animate()
-                            .alpha(0)
-                            .setInterpolator(t -> {
-                                if ((t *= 2) < 1) {
-                                    return (float) (0.5 * Math.pow(t, 4));
-                                }
-
-                                return (float) (1 - 0.5 * Math.abs(Math.pow(2 - t, 4)));
-                            })
-                            .setListener(new Animator.AnimatorListener() {
-                                @Override
-                                public void onAnimationStart(Animator animation) {
-                                    isAnimating = true;
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-                                    isAnimating = false;
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
-                                }
-                            })
-                            .setDuration(500)
-                            .start();
-
-
-                    scrollTopBtn
-                            .animate()
-                            .scaleX(1f)
-                            .scaleY(1f)
-                            .setInterpolator(t -> {
-                                if ((t *= 2) < 1) {
-                                    return (float) (0.5 * Math.pow(t, 4));
-                                }
-
-                                return (float) (1 - 0.5 * Math.abs(Math.pow(2 - t, 4)));
-                            })
-                            .setListener(new AnimatorListenerAdapter() {
-                                @Override
-                                public void onAnimationStart(Animator animation) {
-                                    super.onAnimationStart(animation);
-                                    scrollTopBtn.setVisibility(View.VISIBLE);
-                                }
-                            })
-                            .setDuration(500)
-                            .start();
-
-                }
-
-
-            }
-        }); */
-
-        /*this.scrollTopBtn.setOnClickListener(v -> {
-            this.recyclerView.smoothScrollToPosition(0);
-        });*/
     }
 
     public void onDeleteTodo(@NonNull RecyclerView.ViewHolder viewHolder) {
@@ -403,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements IView {
         int pos = viewHolder.getAdapterPosition();
 
         this.dispatcher.dispatch(
-            PerformDeleteTodoAction.create(todo, databaseReference, dbHelper)
+            PerformDeleteTodoAction.create(todo, databaseReference, getApplicationContext())
                 .subscribe(success -> {
                     if (!success) return;
                     mAdapter.notifyItemRemoved(pos);
@@ -411,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements IView {
                     Snackbar sb = Snackbar.make(findViewById(R.id.mainlayout), "Todo Deleted", Snackbar.LENGTH_LONG)
                             .setAction("Undo", v -> {
                                 dispatcher.dispatch(
-                                        PerformAddTodoAction.create(todo, dbHelper, databaseReference)
+                                        PerformAddTodoAction.create(getApplicationContext(), todo, databaseReference)
                                             .subscribe(success1 -> {
                                                 if (!success1) return;
                                                 mAdapter.notifyItemInserted(pos);
@@ -439,7 +279,6 @@ public class MainActivity extends AppCompatActivity implements IView {
 
         this.mAdapter = TodosRecyclerViewAdapter.create(new ArrayList<>(), this.dispatcher, this);
         this.recyclerView.setAdapter(this.mAdapter);
-        // this.scrollTopBtn = findViewById(R.id.scrollTopBtn);
 
         findViewById(R.id.cardViewAddTodoForm).setClipToOutline(true);
     }
@@ -455,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements IView {
             .dispatcher
             .dispatch(
                 PerformAddTodoAction
-                    .create(todoToInsert, dbHelper, databaseReference)
+                    .create(getApplicationContext(), todoToInsert, databaseReference)
                     .subscribe(success -> {
                         if (!success) return;
 
@@ -491,7 +330,6 @@ public class MainActivity extends AppCompatActivity implements IView {
 
     public void render() {
         TodoState ts = this.todoStore.getState();
-        System.out.println(ts.isPerformingAction);
 
         this.mAdapter.setItems(ts.todos);
 
