@@ -12,20 +12,22 @@ import com.m4rc3l05.my_flux.Adapters.TodosRecyclerViewAdapter;
 import java.util.List;
 
 
-class FetchTodos extends AsyncTask<Context, Void, List<Todo>> {
 
-    @Override
-    protected List<Todo> doInBackground(Context... args) {
-        try {
-            return DBHelper.create(args[0]).getAllTodos();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-}
 public class AsyncCallAction implements AsyncAction {
     private Context ctx;
     private TodosRecyclerViewAdapter mAdapter;
+
+    private static class FetchTodos extends AsyncTask<Context, Void, List<Todo>> {
+
+        @Override
+        protected List<Todo> doInBackground(Context... args) {
+            try {
+                return DBHelper.create(args[0]).getAllTodos();
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
 
 
     private AsyncCallAction(Context ctx, TodosRecyclerViewAdapter todosRecyclerViewAdapter) {
@@ -37,11 +39,13 @@ public class AsyncCallAction implements AsyncAction {
         return new AsyncCallAction(ctx, mAdapter);
     }
 
+
+
     @Override
     public void doWork(Dispatcher dispatcher) {
         new Handler().postDelayed(() -> {
             try {
-                List<Todo> todos = new FetchTodos().execute(ctx).get();
+                List<Todo> todos = new AsyncCallAction.FetchTodos().execute(ctx).get();
                 dispatcher.dispatch(InitTodosAction.create(todos));
                 mAdapter.notifyDataSetChanged();
             } catch(Exception e) {

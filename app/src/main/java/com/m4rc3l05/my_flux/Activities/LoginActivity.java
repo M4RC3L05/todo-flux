@@ -7,9 +7,20 @@ import android.os.Bundle;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.m4rc3l05.my_flux.Container;
+import com.m4rc3l05.my_flux.Core.Actions.AuthUserChangeAction;
+import com.m4rc3l05.my_flux.Core.Actions.PerformLoginAction;
+import com.m4rc3l05.my_flux.Core.Dispatcher;
+import com.m4rc3l05.my_flux.Core.IView;
 import com.m4rc3l05.my_flux.Core.Models.AuthFrase;
+import com.m4rc3l05.my_flux.Core.Stores.AuthState;
+import com.m4rc3l05.my_flux.Core.Stores.AuthStore;
 import com.m4rc3l05.my_flux.R;
 
 import java.util.ArrayList;
@@ -17,13 +28,19 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements IView {
     TextView authFrasesDisplay;
     Button btnLogin;
     TextView txtLoginSwitch;
+    EditText passwordInput;
+    EditText emailInput;
+    TextView txtAuthErrorDisplay;
 
     List<AuthFrase> authFrazes;
     Timer authFrasesTimer;
+    AuthStore authStore;
+    Dispatcher dispatcher;
+    FirebaseAuth fAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +48,10 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         this.setUpDependencies();
+
         this.setUpUI();
         this.setUpListeners();
+        this.render();
     }
 
     private void setUpDependencies() {
@@ -45,6 +64,10 @@ public class LoginActivity extends AppCompatActivity {
                 .add(AuthFrase.create("Personal to-do keeper","#F5D22A"));
         this.authFrazes
                 .add(AuthFrase.create("Save you thoughts", "#1DB954"));
+
+        this.authStore = Container.authStore;
+        this.dispatcher = Container.dispatcher;
+        this.fAuth = FirebaseAuth.getInstance();
     }
 
     private void setUpListeners() {
@@ -90,11 +113,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }, 0, 5000);
 
-        this.btnLogin.setOnClickListener(e -> {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        });
+        this.btnLogin.setOnClickListener(e -> this.dispatcher.dispatch(PerformLoginAction.create(this.emailInput.getText().toString(), this.passwordInput.getText().toString(), fAuth)));
 
         this.txtLoginSwitch.setOnClickListener(e -> {
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
@@ -113,5 +132,47 @@ public class LoginActivity extends AppCompatActivity {
         this.authFrasesDisplay = findViewById(R.id.authFrasesDisplay);
         this.btnLogin = findViewById(R.id.btnLogin);
         this.txtLoginSwitch = findViewById(R.id.txtLoginSwitch);
+        this.passwordInput = findViewById(R.id.passwordInput);
+        this.emailInput = findViewById(R.id.emailInput);
+        this.txtAuthErrorDisplay = findViewById(R.id.txtAuthErrorDisplay);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.authStore.unsubscribe(this);
+        this.dispatcher.unsubscribe(this.authStore);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.authStore.subscribe(this);
+        this.dispatcher.subscribe(this.authStore);
+
+        this.dispatcher.dispatch(AuthUserChangeAction.create(fAuth.getCurrentUser()));
+    }
+
+    private void _goToTodosActivity() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    public void render() {
+        AuthState authState = this.authStore.getState();
+        System.out.println("update " + authState.authUser);
+
+        if (!authState.isPerformAuth && authState.authUser != null) {
+            this._goToTodosActivity();
+            return;
+        }
+
+        this.emailInput.setEnabled(!authState.isPerformAuth);
+        this.passwordInput.setEnabled(!authState.isPerformAuth);
+        this.btnLogin.setEnabled(!authState.isPerformAuth);
+
+        this.txtAuthErrorDisplay.setText(authState.error);
     }
 }

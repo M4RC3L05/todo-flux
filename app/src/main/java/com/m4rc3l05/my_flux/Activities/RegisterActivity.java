@@ -57,14 +57,6 @@ public class RegisterActivity extends AppCompatActivity implements IView {
         this.setUpDependencies();
         this.setUpUI();
         this.setUpListeners();
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null) {
-            this.dispatcher.dispatch(AuthUserChangeAction.create(fAuth.getCurrentUser()));
-            return;
-        }
-
         this.render();
     }
 
@@ -81,6 +73,7 @@ public class RegisterActivity extends AppCompatActivity implements IView {
 
         this.dispatcher = Container.dispatcher;
         this.authStore = Container.authStore;
+        this.fAuth = FirebaseAuth.getInstance();
 
         this.authFrasesTimer = new Timer();
     }
@@ -160,6 +153,8 @@ public class RegisterActivity extends AppCompatActivity implements IView {
         super.onResume();
         this.authStore.subscribe(this);
         this.dispatcher.subscribe(this.authStore);
+
+        this.dispatcher.dispatch(AuthUserChangeAction.create(fAuth.getCurrentUser()));
     }
 
     private void setUpUI() {
@@ -170,8 +165,6 @@ public class RegisterActivity extends AppCompatActivity implements IView {
         this.usernameInput = findViewById(R.id.usernameInput);
         this.txtRegisterSwitch = findViewById(R.id.txtRegisterSwitch);
         this.txtAuthErrorDisplay = findViewById(R.id.txtAuthErrorDisplay);
-
-        this.fAuth = FirebaseAuth.getInstance();
     }
 
     private void _goToTodosActivity() {
