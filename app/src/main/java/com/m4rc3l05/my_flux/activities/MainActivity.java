@@ -25,6 +25,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -77,7 +78,9 @@ public class MainActivity extends AppCompatActivity implements IView {
 
         this.dispatcher.dispatch(
                 PerformFetchAllTodos.create(getApplicationContext(), this.databaseReference)
-                .subscribe(success -> mAdapter.notifyDataSetChanged())
+                .subscribe(success -> {
+                    if (success) mAdapter.notifyDataSetChanged();
+                })
         );
 
         this.render();
@@ -203,13 +206,13 @@ public class MainActivity extends AppCompatActivity implements IView {
                 PerformAddTodoAction
                     .create(getApplicationContext(), todoToInsert, databaseReference)
                     .subscribe(success -> {
-                        if (!success) return;
+                        if (success) mAdapter.notifyItemInserted(0);
 
-                        mAdapter.notifyItemInserted(0);
                         newTodoTextInput.setText("");
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(newTodoTextInput.getWindowToken(), 0);
-                        this.recyclerView.smoothScrollToPosition(0);
+
+                        if (success) this.recyclerView.smoothScrollToPosition(0);
                     })
 
             );
@@ -253,6 +256,11 @@ public class MainActivity extends AppCompatActivity implements IView {
             this.btnAuthProfile.setImageResource(R.drawable.ic_user);
         } else {
             this.btnAuthProfile.setImageURI(authState.authUser.getPhotoUrl());
+        }
+
+        if (ts.error != null) {
+            Toast.makeText(getApplicationContext(), ts.error, Toast.LENGTH_SHORT)
+                    .show();
         }
     }
 }

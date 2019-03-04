@@ -6,6 +6,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.m4rc3l05.my_flux.ConnectionUtils;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.actions.StartPerformTodoAction;
+import com.m4rc3l05.my_flux.core.actions.TodoActionError;
 import com.m4rc3l05.my_flux.core.actions.UpdateTodoAction;
 import com.m4rc3l05.my_flux.models.Todo;
 
@@ -38,6 +39,7 @@ public class PerformUpdateTodoAction extends BaseAsyncAction {
                         );
                         this.__notify(true);
                     } else {
+                        dispatcher.dispatch(TodoActionError.create("Could not update to-do"));
                         this.__notify(false);
                     }
                 });

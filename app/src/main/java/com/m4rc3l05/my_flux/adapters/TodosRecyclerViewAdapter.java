@@ -70,6 +70,8 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
             else this.textView.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
 
             this.view.setOnLongClickListener(v -> {
+                if (Container.todoStore.getState().isLoading || Container.todoStore.getState().isPerformingAction) return true;
+
                 Todo updatedTodo = Todo.create(todo.get_id(), todo.get_text(), !todo.is_isDone(), todo.get_timestamp());
 
                 _dispatcher.dispatch(
@@ -84,6 +86,8 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
             });
 
             this.view.setOnClickListener(v -> {
+                if (Container.todoStore.getState().isLoading || Container.todoStore.getState().isPerformingAction) return;
+
                 Dialog d = new Dialog(ctx);
                 LayoutInflater inflater = ((MainActivity) ctx).getLayoutInflater();
                 View view = inflater.inflate(R.layout.edit_todo_dialog, null);
@@ -92,6 +96,7 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
                 todoText.setText(todo.get_text());
 
                 editBtn.setOnClickListener(l -> {
+
                     String text = todoText.getText().toString().trim();
 
                     if (text.length() <= 0) return;

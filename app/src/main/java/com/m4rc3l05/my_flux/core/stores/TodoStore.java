@@ -3,6 +3,7 @@ package com.m4rc3l05.my_flux.core.stores;
 import com.m4rc3l05.my_flux.core.actions.AddTodoAction;
 import com.m4rc3l05.my_flux.core.actions.BaseAction;
 import com.m4rc3l05.my_flux.core.actions.InitTodosAction;
+import com.m4rc3l05.my_flux.core.actions.TodoActionError;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformAddTodoAction;
 import com.m4rc3l05.my_flux.core.actions.RemoveTodoAction;
 import com.m4rc3l05.my_flux.core.actions.StartPerformTodoAction;
@@ -26,7 +27,7 @@ public class TodoStore extends Store<TodoState> {
 
     @Override
     protected TodoState getInitialState() {
-        return TodoState.create(new ArrayList<>(), true, false);
+        return TodoState.create(new ArrayList<>(), true, false, null);
     }
 
     @Override
@@ -34,13 +35,13 @@ public class TodoStore extends Store<TodoState> {
 
         if (action instanceof AddTodoAction) {
 
-            if (this._state.todos.contains(((AddTodoAction) action).todo)) return TodoState.create(this._state.todos, false, false);
+            if (this._state.todos.contains(((AddTodoAction) action).todo)) return TodoState.create(this._state.todos, false, false, null);
 
             List<Todo> tmpTodos = new ArrayList<>();
             tmpTodos.add(((AddTodoAction) action).todo);
             tmpTodos.addAll(this._state.todos);
 
-            return TodoState.create(tmpTodos, false, false);
+            return TodoState.create(tmpTodos, false, false, null);
 
         } else if (action instanceof RemoveTodoAction) {
             List<Todo> tmpTodos = new ArrayList<>();
@@ -49,7 +50,7 @@ public class TodoStore extends Store<TodoState> {
                 if (t.get_id().equals(((RemoveTodoAction) action).todoId)) continue;
                 tmpTodos.add(t);
             }
-            return TodoState.create(tmpTodos, false, false);
+            return TodoState.create(tmpTodos, false, false, null);
 
         } else if (action instanceof UndoRemoveTodoAction) {
             List<Todo> tmpTodos = new ArrayList<>(this._state.todos);
@@ -59,7 +60,7 @@ public class TodoStore extends Store<TodoState> {
             else
                 tmpTodos.add(((UndoRemoveTodoAction) action).pos, ((UndoRemoveTodoAction) action).todo);
 
-            return TodoState.create(tmpTodos,false, false);
+            return TodoState.create(tmpTodos,false, false, null);
         }  else if(action instanceof UpdateTodoAction) {
             List<Todo> tmpTodos = new ArrayList<Todo>();
 
@@ -69,13 +70,15 @@ public class TodoStore extends Store<TodoState> {
                 } else tmpTodos.add(t);
             }
 
-            return TodoState.create(tmpTodos,false, false);
+            return TodoState.create(tmpTodos,false, false, null);
         } else if(action instanceof InitTodosAction) {
-            return TodoState.create(((InitTodosAction) action).todos,false, false);
+            return TodoState.create(((InitTodosAction) action).todos,false, false, null);
         } else if (action instanceof PerformAddTodoAction) {
-            return TodoState.create(this._state.todos, false, true);
+            return TodoState.create(this._state.todos, false, true, null);
         } else if (action instanceof StartPerformTodoAction) {
-            return TodoState.create(this._state.todos, this._state.isLoading, true);
+            return TodoState.create(this._state.todos, this._state.isLoading, true, null);
+        } else if (action instanceof TodoActionError) {
+            return TodoState.create(this._state.todos, false, false, ((TodoActionError) action).error);
         } else return this._state;
     }
 }

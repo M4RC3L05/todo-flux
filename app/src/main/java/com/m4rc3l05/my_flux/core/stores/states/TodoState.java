@@ -8,14 +8,16 @@ public class TodoState {
     public final List<Todo> todos;
     public final boolean isLoading;
     public final boolean isPerformingAction;
+    public final String error;
 
-    private TodoState(List<Todo> todos, boolean isLoading, boolean isPerformingAction) {
+    private TodoState(List<Todo> todos, boolean isLoading, boolean isPerformingAction, String error) {
         this.todos = todos;
         this.isLoading = isLoading;
         this.isPerformingAction = isPerformingAction;
+        this.error = error;
     }
 
-    public static TodoState create(List<Todo> todos, boolean isLoading, boolean isPerformingAction) {
-        return new TodoState(todos, isLoading, isPerformingAction);
+    public static TodoState create(List<Todo> todos, boolean isLoading, boolean isPerformingAction, String error) {
+        return new TodoState(todos, isLoading, isPerformingAction, error);
     }
 }

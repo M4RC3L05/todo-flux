@@ -7,6 +7,7 @@ import com.m4rc3l05.my_flux.ConnectionUtils;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.actions.RemoveTodoAction;
 import com.m4rc3l05.my_flux.core.actions.StartPerformTodoAction;
+import com.m4rc3l05.my_flux.core.actions.TodoActionError;
 import com.m4rc3l05.my_flux.models.Todo;
 
 public class PerformDeleteTodoAction extends BaseAsyncAction {
@@ -36,6 +37,7 @@ public class PerformDeleteTodoAction extends BaseAsyncAction {
                         dispatcher.dispatch(RemoveTodoAction.create(todo.get_id()));
                         this.__notify(true);
                     } else {
+                        dispatcher.dispatch(TodoActionError.create("Could not delete to-do"));
                         this.__notify(false);
                     }
                 });

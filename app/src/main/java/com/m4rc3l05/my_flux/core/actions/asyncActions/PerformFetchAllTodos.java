@@ -11,6 +11,7 @@ import com.m4rc3l05.my_flux.ConnectionUtils;
 import com.m4rc3l05.my_flux.core.actions.InitTodosAction;
 import com.m4rc3l05.my_flux.core.actions.StartPerformTodoAction;
 import com.m4rc3l05.my_flux.core.Dispatcher;
+import com.m4rc3l05.my_flux.core.actions.TodoActionError;
 import com.m4rc3l05.my_flux.models.Todo;
 
 import org.json.JSONArray;
@@ -44,6 +45,7 @@ public class PerformFetchAllTodos extends BaseAsyncAction {
 
         this.databaseReference
                 .addListenerForSingleValueEvent(new ValueEventListener() {
+
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Map<String, String> todos = (Map<String, String>) dataSnapshot.getValue();
@@ -86,7 +88,8 @@ public class PerformFetchAllTodos extends BaseAsyncAction {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                        dispatcher.dispatch(TodoActionError.create("Could not fetch to-dos."));
+                        __notify(false);
                     }
                 });
     }
