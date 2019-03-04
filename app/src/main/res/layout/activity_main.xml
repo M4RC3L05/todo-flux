@@ -8,7 +8,7 @@
     android:animateLayoutChanges="true"
     android:background="#000"
     android:orientation="vertical"
-    tools:context=".Activities.MainActivity">
+    tools:context=".activities.MainActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recylerVTodos"

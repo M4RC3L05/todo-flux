@@ -1,9 +1,8 @@
 package com.m4rc3l05.my_flux;
 
-import com.m4rc3l05.my_flux.Core.Dispatcher;
-import com.m4rc3l05.my_flux.Core.Stores.AuthState;
-import com.m4rc3l05.my_flux.Core.Stores.AuthStore;
-import com.m4rc3l05.my_flux.Core.Stores.TodoStore;
+import com.m4rc3l05.my_flux.core.Dispatcher;
+import com.m4rc3l05.my_flux.core.stores.AuthStore;
+import com.m4rc3l05.my_flux.core.stores.TodoStore;
 
 public class Container {
     public static final Dispatcher dispatcher = Dispatcher.create();

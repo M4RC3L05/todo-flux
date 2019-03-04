@@ -8,7 +8,7 @@
     android:paddingTop="50dp"
     android:paddingEnd="30dp"
     android:paddingBottom="50dp"
-    tools:context=".Activities.RegisterActivity"
+    tools:context=".activities.RegisterActivity"
     android:background="#000">
 
     <TextView

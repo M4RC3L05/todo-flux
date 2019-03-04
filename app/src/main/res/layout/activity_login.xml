@@ -10,7 +10,7 @@
     android:paddingEnd="30dp"
     android:paddingBottom="50dp"
     android:animateLayoutChanges="true"
-    tools:context=".Activities.LoginActivity">
+    tools:context=".activities.LoginActivity">
 
     <EditText
         android:id="@+id/passwordInput"
