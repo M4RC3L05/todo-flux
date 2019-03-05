@@ -110,6 +110,11 @@ public class MainActivity extends AppCompatActivity implements IView {
             return true;
         });
 
+        this.btnAuthProfile.setOnClickListener(e -> {
+            Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
+            startActivity(intent);
+        });
+
         this.addNewTodoBtn.setOnClickListener(l -> this.onAddNewTodo());
 
         ItemTouchHelper ith = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
