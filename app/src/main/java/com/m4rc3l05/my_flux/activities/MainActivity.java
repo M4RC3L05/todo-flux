@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements IView {
     ProgressBar loaderIndicatorTodoAction;
     TextView btnAddTodoText;
     ImageButton btnAuthProfile;
+    Container container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,9 +88,10 @@ public class MainActivity extends AppCompatActivity implements IView {
     }
 
     private void setUpDependencies() {
-        this.dispatcher = Container.dispatcher;
-        this.todoStore = Container.todoStore;
-        this.authStore = Container.authStore;
+        this.container = Container.getInstance();
+        this.dispatcher = (Dispatcher) this.container.get(Dispatcher.class.toString());
+        this.todoStore = (TodoStore) this.container.get(TodoStore.class.toString());
+        this.authStore = (AuthStore) this.container.get(AuthStore.class.toString());
         this.fDatabase = FirebaseDatabase.getInstance();
         this.databaseReference = this.fDatabase.getReference("todos").child(authStore.getState().authUser.getUid());
         this.databaseReference.keepSynced(true);
@@ -187,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements IView {
         this.layoutManager = new LinearLayoutManager(this);
         this.recyclerView.setLayoutManager(this.layoutManager);
 
-        this.mAdapter = TodosRecyclerViewAdapter.create(new ArrayList<>(), this.dispatcher, this);
+        this.mAdapter = TodosRecyclerViewAdapter.create(new ArrayList<>(), this.dispatcher, this, this.container);
         this.recyclerView.setAdapter(this.mAdapter);
 
         findViewById(R.id.cardViewAddTodoForm).setClipToOutline(true);

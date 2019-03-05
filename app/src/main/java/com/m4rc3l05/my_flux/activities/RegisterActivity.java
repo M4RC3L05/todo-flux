@@ -43,6 +43,7 @@ public class RegisterActivity extends AppCompatActivity implements IView {
     AuthStore authStore;
 
     FirebaseAuth fAuth;
+    Container container;
 
 
     @Override
@@ -68,8 +69,10 @@ public class RegisterActivity extends AppCompatActivity implements IView {
         this.authFrazes
                 .add(AuthFrase.create("Save you thoughts", "#1DB954"));
 
-        this.dispatcher = Container.dispatcher;
-        this.authStore = Container.authStore;
+        this.container = Container.getInstance();
+
+        this.dispatcher = (Dispatcher) this.container.get(Dispatcher.class.toString());
+        this.authStore =  (AuthStore) this.container.get(AuthStore.class.toString());
         this.fAuth = FirebaseAuth.getInstance();
 
         this.authFrasesTimer = new Timer();

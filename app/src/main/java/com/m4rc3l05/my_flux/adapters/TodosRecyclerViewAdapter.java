@@ -24,6 +24,8 @@ import com.m4rc3l05.my_flux.Container;
 import com.m4rc3l05.my_flux.activities.MainActivity;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformUpdateTodoAction;
 import com.m4rc3l05.my_flux.core.Dispatcher;
+import com.m4rc3l05.my_flux.core.stores.AuthStore;
+import com.m4rc3l05.my_flux.core.stores.TodoStore;
 import com.m4rc3l05.my_flux.models.Todo;
 import com.m4rc3l05.my_flux.R;
 
@@ -34,15 +36,17 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
     private List<Todo> _todos;
     private Dispatcher _dispatcher;
     private Context ctx;
+    private Container container;
 
-    private TodosRecyclerViewAdapter(List<Todo> todos, Dispatcher dispatcher, Context ctx) {
+    private TodosRecyclerViewAdapter(List<Todo> todos, Dispatcher dispatcher, Context ctx, Container container) {
         this._todos = todos;
         this._dispatcher = dispatcher;
         this.ctx = ctx;
+        this.container = container;
     }
 
-    public static TodosRecyclerViewAdapter create(List<Todo> todos, Dispatcher dispatcher, Context ctx) {
-        return new TodosRecyclerViewAdapter(todos, dispatcher, ctx);
+    public static TodosRecyclerViewAdapter create(List<Todo> todos, Dispatcher dispatcher, Context ctx, Container container) {
+        return new TodosRecyclerViewAdapter(todos, dispatcher, ctx, container);
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -70,12 +74,12 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
             else this.textView.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
 
             this.view.setOnLongClickListener(v -> {
-                if (Container.todoStore.getState().isLoading || Container.todoStore.getState().isPerformingAction) return true;
+                if (((TodoStore) container.get(TodoStore.class.toString())).getState().isLoading || ((TodoStore) container.get(TodoStore.class.toString())).getState().isPerformingAction) return true;
 
                 Todo updatedTodo = Todo.create(todo.get_id(), todo.get_text(), !todo.is_isDone(), todo.get_timestamp());
 
                 _dispatcher.dispatch(
-                        PerformUpdateTodoAction.create(updatedTodo, ctx, FirebaseDatabase.getInstance().getReference("todos").child(Container.authStore.getState().authUser.getUid()))
+                        PerformUpdateTodoAction.create(updatedTodo, ctx, FirebaseDatabase.getInstance().getReference("todos").child(((AuthStore) container.get(AuthStore.class.toString())).getState().authUser.getUid()))
                             .subscribe(success -> {
                                 if (!success) return;
                                 notifyItemChanged(getAdapterPosition());
@@ -86,7 +90,7 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
             });
 
             this.view.setOnClickListener(v -> {
-                if (Container.todoStore.getState().isLoading || Container.todoStore.getState().isPerformingAction) return;
+                if (((TodoStore) container.get(TodoStore.class.toString())).getState().isLoading || ((TodoStore) container.get(TodoStore.class.toString())).getState().isPerformingAction) return;
 
                 Dialog d = new Dialog(ctx);
                 LayoutInflater inflater = ((MainActivity) ctx).getLayoutInflater();
@@ -104,7 +108,7 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
                     Todo updatedTodo = Todo.create(todo.get_id(), text, todo.is_isDone(), todo.get_timestamp());
 
                     _dispatcher.dispatch(
-                            PerformUpdateTodoAction.create(updatedTodo, ctx, FirebaseDatabase.getInstance().getReference("todos").child(Container.authStore.getState().authUser.getUid()))
+                            PerformUpdateTodoAction.create(updatedTodo, ctx, FirebaseDatabase.getInstance().getReference("todos").child(((AuthStore) container.get(AuthStore.class.toString())).getState().authUser.getUid()))
                                 .subscribe(success -> {
                                     if (!success) return;
 

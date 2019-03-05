@@ -39,6 +39,7 @@ public class LoginActivity extends AppCompatActivity implements IView {
     AuthStore authStore;
     Dispatcher dispatcher;
     FirebaseAuth fAuth;
+    Container container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +64,9 @@ public class LoginActivity extends AppCompatActivity implements IView {
         this.authFrazes
                 .add(AuthFrase.create("Save you thoughts", "#1DB954"));
 
-        this.authStore = Container.authStore;
-        this.dispatcher = Container.dispatcher;
+        this.container = Container.getInstance();
+        this.authStore = (AuthStore) this.container.get(AuthStore.class.toString());
+        this.dispatcher = (Dispatcher) this.container.get(Dispatcher.class.toString());
         this.fAuth = FirebaseAuth.getInstance();
     }
 
