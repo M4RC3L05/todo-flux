@@ -1,7 +1,7 @@
 package com.m4rc3l05.my_flux.core;
 
-import com.m4rc3l05.my_flux.core.actions.asyncActions.AsyncAction;
 import com.m4rc3l05.my_flux.core.actions.BaseAction;
+import com.m4rc3l05.my_flux.core.actions.asyncActions.AsyncAction;
 import com.m4rc3l05.my_flux.core.stores.Store;
 
 import java.util.ArrayList;

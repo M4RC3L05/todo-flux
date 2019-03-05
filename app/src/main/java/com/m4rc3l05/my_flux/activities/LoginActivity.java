@@ -2,8 +2,8 @@ package com.m4rc3l05.my_flux.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -12,14 +12,14 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.m4rc3l05.my_flux.Container;
-import com.m4rc3l05.my_flux.core.actions.AuthUserChangeAction;
-import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformLoginAction;
+import com.m4rc3l05.my_flux.R;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.IView;
-import com.m4rc3l05.my_flux.models.AuthFrase;
-import com.m4rc3l05.my_flux.core.stores.states.AuthState;
+import com.m4rc3l05.my_flux.core.actions.AuthUserChangeAction;
+import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformLoginAction;
 import com.m4rc3l05.my_flux.core.stores.AuthStore;
-import com.m4rc3l05.my_flux.R;
+import com.m4rc3l05.my_flux.core.stores.states.AuthState;
+import com.m4rc3l05.my_flux.models.AuthFrase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +44,14 @@ public class LoginActivity extends AppCompatActivity implements IView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            this._goToTodosActivity();
+        }
+
         setContentView(R.layout.activity_login);
 
         this.setUpDependencies();
-
         this.setUpUI();
         this.setUpListeners();
         this.render();
@@ -151,6 +155,7 @@ public class LoginActivity extends AppCompatActivity implements IView {
         this.dispatcher.subscribe(this.authStore);
         this.dispatcher.dispatch(AuthUserChangeAction.create(fAuth.getCurrentUser()));
     }
+
 
     private void _goToTodosActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);

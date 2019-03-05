@@ -1,10 +1,10 @@
 package com.m4rc3l05.my_flux.core.actions.asyncActions;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.actions.AuthErrorAction;
 import com.m4rc3l05.my_flux.core.actions.AuthUserChangeAction;
 import com.m4rc3l05.my_flux.core.actions.StartAuthAction;
-import com.m4rc3l05.my_flux.core.Dispatcher;
 
 public class PerformLoginAction extends BaseAsyncAction {
     private final String email;

@@ -18,16 +18,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 import com.google.firebase.database.FirebaseDatabase;
 import com.m4rc3l05.my_flux.Container;
+import com.m4rc3l05.my_flux.R;
 import com.m4rc3l05.my_flux.activities.MainActivity;
-import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformUpdateTodoAction;
 import com.m4rc3l05.my_flux.core.Dispatcher;
+import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformUpdateTodoAction;
 import com.m4rc3l05.my_flux.core.stores.AuthStore;
 import com.m4rc3l05.my_flux.core.stores.TodoStore;
 import com.m4rc3l05.my_flux.models.Todo;
-import com.m4rc3l05.my_flux.R;
 
 import java.util.List;
 import java.util.Objects;

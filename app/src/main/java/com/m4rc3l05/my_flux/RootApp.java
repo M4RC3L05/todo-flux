@@ -1,7 +1,6 @@
 package com.m4rc3l05.my_flux;
 
 import android.app.Application;
-
 import com.google.firebase.database.FirebaseDatabase;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.stores.AuthStore;

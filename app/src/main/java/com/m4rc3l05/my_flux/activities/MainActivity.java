@@ -1,48 +1,44 @@
 package com.m4rc3l05.my_flux.activities;
 
 
-import android.animation.Animator;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.m4rc3l05.my_flux.Container;
-import com.m4rc3l05.my_flux.RootApp;
-import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformDeleteTodoAction;
-import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformFetchAllTodos;
-import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformAddTodoAction;
-import com.m4rc3l05.my_flux.core.stores.AuthStore;
+import com.m4rc3l05.my_flux.R;
+import com.m4rc3l05.my_flux.adapters.TodosRecyclerViewAdapter;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.IView;
-import com.m4rc3l05.my_flux.core.stores.states.AuthState;
-import com.m4rc3l05.my_flux.models.Todo;
-import com.m4rc3l05.my_flux.adapters.TodosRecyclerViewAdapter;
-import com.m4rc3l05.my_flux.R;
-import com.m4rc3l05.my_flux.core.stores.states.TodoState;
+import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformAddTodoAction;
+import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformDeleteTodoAction;
+import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformFetchAllTodos;
+import com.m4rc3l05.my_flux.core.stores.AuthStore;
 import com.m4rc3l05.my_flux.core.stores.TodoStore;
+import com.m4rc3l05.my_flux.core.stores.states.AuthState;
+import com.m4rc3l05.my_flux.core.stores.states.TodoState;
+import com.m4rc3l05.my_flux.models.Todo;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -71,6 +67,11 @@ public class MainActivity extends AppCompatActivity implements IView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            this._goToLoginActivity();
+        }
+
         setContentView(R.layout.activity_main);
 
         this.setUpDependencies();
@@ -85,6 +86,12 @@ public class MainActivity extends AppCompatActivity implements IView {
         );
 
         this.render();
+    }
+
+    private void _goToLoginActivity() {
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     private void setUpDependencies() {

@@ -1,11 +1,6 @@
 package com.m4rc3l05.my_flux;
 
-import com.m4rc3l05.my_flux.core.Dispatcher;
-import com.m4rc3l05.my_flux.core.stores.AuthStore;
-import com.m4rc3l05.my_flux.core.stores.TodoStore;
-
 import java.util.HashMap;
-import java.util.function.Supplier;
 
 public class Container {
     private static Container instance;
