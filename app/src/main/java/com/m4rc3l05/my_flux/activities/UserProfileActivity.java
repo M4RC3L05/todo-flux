@@ -14,6 +14,7 @@ import com.m4rc3l05.my_flux.Container;
 import com.m4rc3l05.my_flux.R;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.IView;
+import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformLogoutAction;
 import com.m4rc3l05.my_flux.core.stores.AuthStore;
 import com.m4rc3l05.my_flux.core.stores.states.AuthState;
 
@@ -45,8 +46,10 @@ public class UserProfileActivity extends AppCompatActivity implements IView {
 
     private void setUpListeners() {
         this.btnLogout.setOnClickListener(e -> {
-            Toast.makeText(this, "Logout", Toast.LENGTH_SHORT)
-                    .show();
+            dispatcher.dispatch(
+                    PerformLogoutAction.create(FirebaseAuth.getInstance())
+                        .subscribe(success -> this._goToLoginActivity())
+            );
         });
     }
 
@@ -90,6 +93,10 @@ public class UserProfileActivity extends AppCompatActivity implements IView {
     public void render() {
         AuthState authState = this.authStore.getState();
 
+        if (authState.authUser == null) {
+            this._goToLoginActivity();
+            return;
+        }
 
         if (authState.authUser.getPhotoUrl() == null) {
             this.profileImageDisplay.setImageDrawable(getDrawable(R.drawable.ic_user));

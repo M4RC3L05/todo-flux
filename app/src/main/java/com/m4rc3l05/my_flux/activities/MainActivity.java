@@ -261,6 +261,11 @@ public class MainActivity extends AppCompatActivity implements IView {
         TodoState ts = this.todoStore.getState();
         AuthState authState = this.authStore.getState();
 
+        if (authState.authUser == null) {
+            this._goToLoginActivity();
+            return;
+        }
+
         this.mAdapter.setItems(ts.todos);
 
         this.loadingTodosSpinner.setVisibility(ts.isLoading ? View.VISIBLE : View.INVISIBLE);
