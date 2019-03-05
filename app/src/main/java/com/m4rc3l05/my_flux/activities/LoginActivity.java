@@ -15,6 +15,7 @@ import com.m4rc3l05.my_flux.Container;
 import com.m4rc3l05.my_flux.R;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.IView;
+import com.m4rc3l05.my_flux.core.actions.AuthErrorAction;
 import com.m4rc3l05.my_flux.core.actions.AuthUserChangeAction;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformLoginAction;
 import com.m4rc3l05.my_flux.core.stores.AuthStore;
@@ -120,6 +121,7 @@ public class LoginActivity extends AppCompatActivity implements IView {
         this.btnLogin.setOnClickListener(e -> this.dispatcher.dispatch(PerformLoginAction.create(this.emailInput.getText().toString(), this.passwordInput.getText().toString(), fAuth)));
 
         this.txtLoginSwitch.setOnClickListener(e -> {
+            dispatcher.dispatch(AuthErrorAction.create(null));
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
