@@ -3,9 +3,11 @@ package com.m4rc3l05.my_flux.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.m4rc3l05.my_flux.Container;
@@ -39,7 +42,9 @@ import com.m4rc3l05.my_flux.core.stores.TodoStore;
 import com.m4rc3l05.my_flux.core.stores.states.AuthState;
 import com.m4rc3l05.my_flux.core.stores.states.TodoState;
 import com.m4rc3l05.my_flux.models.Todo;
+import com.squareup.picasso.Picasso;
 
+import java.net.URI;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
