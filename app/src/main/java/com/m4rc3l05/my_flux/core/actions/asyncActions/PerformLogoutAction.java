@@ -10,8 +10,6 @@ public class PerformLogoutAction extends BaseAsyncAction {
     private final FirebaseAuth fAuth;
 
     private PerformLogoutAction(FirebaseAuth fAuth) {
-        super();
-
         this.fAuth = fAuth;
     }
 

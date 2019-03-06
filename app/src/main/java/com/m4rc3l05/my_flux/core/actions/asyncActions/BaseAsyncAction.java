@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseAsyncAction extends BaseAction implements AsyncAction {
-    protected List<AsyncActionSubscription> listeners;
-    protected boolean hasNotify;
+    private List<AsyncActionSubscription> listeners;
+    private boolean hasNotify;
 
-    protected BaseAsyncAction() {
+    BaseAsyncAction() {
         this.listeners = new ArrayList<>();
         hasNotify = false;
     }
@@ -19,7 +19,7 @@ public abstract class BaseAsyncAction extends BaseAction implements AsyncAction 
         return this;
     }
 
-    protected void __notify(boolean success) {
+    void __notify(boolean success) {
         if (this.hasNotify) return;
         
         for(AsyncActionSubscription sub: this.listeners) {
