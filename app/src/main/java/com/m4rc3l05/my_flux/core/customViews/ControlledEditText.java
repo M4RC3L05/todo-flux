@@ -39,13 +39,14 @@ public class ControlledEditText extends android.support.v7.widget.AppCompatEditT
                 if (getTag() != "@@Controlled@@") {
                     cb.call(s.toString());
                 }
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                setSelection(prevPos);
-                setTag(null);
+                if (getTag() == "@@Controlled@@") {
+                    System.out.println(s.length());
+                    setSelection(prevPos <= 0 ? 0 : prevPos >= s.length() ? s.length() : prevPos);
+                }
             }
         });
     }
@@ -53,5 +54,6 @@ public class ControlledEditText extends android.support.v7.widget.AppCompatEditT
     public void setControlledText(String s) {
         setTag("@@Controlled@@");
         this.setText(s);
+        setTag(null);
     }
 }

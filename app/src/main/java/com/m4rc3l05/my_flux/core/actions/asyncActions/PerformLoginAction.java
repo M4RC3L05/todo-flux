@@ -30,10 +30,15 @@ public class PerformLoginAction extends BaseAsyncAction {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             dispatcher.dispatch(AuthUserChangeAction.create(fAuth.getCurrentUser()));
-                        } else dispatcher.dispatch(AuthErrorAction.create(task.getException().getMessage()));
+                            __notify(true);
+                        } else {
+                            dispatcher.dispatch(AuthErrorAction.create(task.getException().getMessage()));
+                            __notify(true);
+                        }
                     });
         } catch (Exception e) {
-            dispatcher.dispatch(AuthErrorAction.create("Could not log in"));
+            dispatcher.dispatch(AuthErrorAction.create("Could not login"));
+            __notify(false);
         }
     }
 }

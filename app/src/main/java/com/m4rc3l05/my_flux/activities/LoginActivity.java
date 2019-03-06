@@ -129,7 +129,17 @@ public class LoginActivity extends AppCompatActivity implements IView {
             }
         }, 0, 5000);
 
-        this.btnLogin.setOnClickListener(e -> this.dispatcher.dispatch(PerformLoginAction.create(loginFormStore.getState().email, loginFormStore.getState().password, fAuth)));
+        this.btnLogin.setOnClickListener(e -> this.dispatcher.dispatch(PerformLoginAction.create(
+                loginFormStore.getState().email, loginFormStore.getState().password, fAuth)
+                    .subscribe(success -> {
+                        if (!success) return;
+
+                        dispatcher.dispatch(OnInputChangeEvent.create("", "email", "login_form"));
+                        dispatcher.dispatch(OnInputChangeEvent.create("", "password", "login_form"));
+
+                        this._goToTodosActivity();
+                    })
+        ));
 
         this.txtLoginSwitch.setOnClickListener(e -> {
             dispatcher.dispatch(AuthErrorAction.create(null));
@@ -189,13 +199,12 @@ public class LoginActivity extends AppCompatActivity implements IView {
         AuthState authState = this.authStore.getState();
         LoginFormState loginFormState = this.loginFormStore.getState();
 
-        if (!authState.isPerformAuth && authState.authUser != null) {
-            this._goToTodosActivity();
-            return;
-        }
+        System.out.println(loginFormState.email + " - " + loginFormState.password);
 
+        this.emailInput.setEnabled(!authState.isPerformAuth);
         this.emailInput.setControlledText(loginFormState.email);
 
+        this.passwordInput.setEnabled(!authState.isPerformAuth);
         this.passwordInput.setControlledText(loginFormState.password);
 
         this.btnLogin.setEnabled(!authState.isPerformAuth);
