@@ -6,10 +6,6 @@ import com.m4rc3l05.my_flux.core.stores.states.LoginFormState;
 
 public class LoginFormStore extends Store<LoginFormState> {
 
-    private LoginFormStore() {
-        super();
-    }
-
     public static LoginFormStore create() {
         return new LoginFormStore();
     }
@@ -23,10 +19,12 @@ public class LoginFormStore extends Store<LoginFormState> {
     protected LoginFormState reduce(LoginFormState state, BaseAction action) {
         if (action instanceof OnInputChangeEvent && ((OnInputChangeEvent) action).context.equals("login_form")) {
             return ((OnInputChangeEvent) action).inputName.equals("email")
-                    ? LoginFormState.create(((OnInputChangeEvent) action).text, this._state.password)
-                    : LoginFormState.create(this._state.email, ((OnInputChangeEvent) action).text);
+                    ? LoginFormState.create(((OnInputChangeEvent) action).text, state.password)
+                    : ((OnInputChangeEvent) action).inputName.equals("password")
+                    ? LoginFormState.create(state.email, ((OnInputChangeEvent) action).text)
+                    : state;
         }
 
-        return this._state;
+        return state;
     }
 }

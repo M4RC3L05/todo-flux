@@ -6,6 +6,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.stores.AuthStore;
 import com.m4rc3l05.my_flux.core.stores.LoginFormStore;
+import com.m4rc3l05.my_flux.core.stores.RegisterFormStore;
 import com.m4rc3l05.my_flux.core.stores.TodoStore;
 
 public class RootApp extends Application {
@@ -20,6 +21,7 @@ public class RootApp extends Application {
 
         Container
                 .getInstance()
+                .registerSingleton(RegisterFormStore.class.toString(), RegisterFormStore::create)
                 .registerSingleton(LoginFormStore.class.toString(), LoginFormStore::create)
                 .registerSingleton(TodoStore.class.toString(), TodoStore::create)
                 .registerSingleton(AuthStore.class.toString(), AuthStore::create)

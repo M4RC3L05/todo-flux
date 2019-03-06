@@ -44,7 +44,6 @@ public class ControlledEditText extends android.support.v7.widget.AppCompatEditT
             @Override
             public void afterTextChanged(Editable s) {
                 if (getTag() == "@@Controlled@@") {
-                    System.out.println(s.length());
                     setSelection(prevPos <= 0 ? 0 : prevPos >= s.length() ? s.length() : prevPos);
                 }
             }

@@ -9,9 +9,9 @@ import java.util.List;
 public abstract class Store<T> {
 
     private final List<IView> _views;
-    protected T _state;
+    private T _state;
 
-    protected Store() {
+    Store() {
         this._views = new ArrayList<IView>();
         this._state = this.getInitialState();
     }

@@ -37,12 +37,18 @@ public class PerformRegisterAction extends BaseAsyncAction {
                             if (task.isSuccessful()){
                                 Objects.requireNonNull(fAuth.getCurrentUser())
                                         .updateProfile((new UserProfileChangeRequest.Builder()).setDisplayName(username).build())
-                                        .addOnCompleteListener(task1 -> dispatcher.dispatch(AuthUserChangeAction.create(fAuth.getCurrentUser())));
-                            } else
+                                        .addOnCompleteListener(task1 -> {
+                                            dispatcher.dispatch(AuthUserChangeAction.create(fAuth.getCurrentUser()));
+                                            __notify(true);
+                                        });
+                            } else {
                                 dispatcher.dispatch(AuthErrorAction.create(Objects.requireNonNull(task.getException()).getMessage()));
+                                __notify(false);
+                            }
                         });
             } catch (Exception e) {
                 dispatcher.dispatch(AuthErrorAction.create("Could not create account"));
+                __notify(false);
             }
     }
 }

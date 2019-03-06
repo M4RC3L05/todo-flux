@@ -17,9 +17,13 @@ import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.IView;
 import com.m4rc3l05.my_flux.core.actions.AuthErrorAction;
 import com.m4rc3l05.my_flux.core.actions.AuthUserChangeAction;
+import com.m4rc3l05.my_flux.core.actions.OnInputChangeEvent;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformRegisterAction;
+import com.m4rc3l05.my_flux.core.customViews.ControlledEditText;
 import com.m4rc3l05.my_flux.core.stores.AuthStore;
+import com.m4rc3l05.my_flux.core.stores.RegisterFormStore;
 import com.m4rc3l05.my_flux.core.stores.states.AuthState;
+import com.m4rc3l05.my_flux.core.stores.states.RegisterFormState;
 import com.m4rc3l05.my_flux.models.AuthFrase;
 
 import java.util.ArrayList;
@@ -31,9 +35,9 @@ public class RegisterActivity extends AppCompatActivity implements IView {
 
     TextView authFrasesDisplay;
     Button btnRegister;
-    EditText emailInput;
-    EditText passwordInput;
-    EditText usernameInput;
+    ControlledEditText emailInput;
+    ControlledEditText passwordInput;
+    ControlledEditText usernameInput;
     TextView txtRegisterSwitch;
     TextView txtAuthErrorDisplay;
 
@@ -41,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity implements IView {
     Timer authFrasesTimer;
     Dispatcher dispatcher;
     AuthStore authStore;
+    RegisterFormStore registerFormStore;
 
     FirebaseAuth fAuth;
     Container container;
@@ -76,6 +81,7 @@ public class RegisterActivity extends AppCompatActivity implements IView {
         this.container = Container.getInstance();
 
         this.dispatcher = (Dispatcher) this.container.get(Dispatcher.class.toString());
+        this.registerFormStore = (RegisterFormStore) this.container.get(RegisterFormStore.class.toString());
         this.authStore =  (AuthStore) this.container.get(AuthStore.class.toString());
         this.fAuth = FirebaseAuth.getInstance();
 
@@ -123,14 +129,25 @@ public class RegisterActivity extends AppCompatActivity implements IView {
             }
         }, 0, 5000);
 
-        this.btnRegister.setOnClickListener(e -> {
-            this.dispatcher.dispatch(PerformRegisterAction.create(
-                    this.emailInput.getText().toString(),
-                    this.usernameInput.getText().toString(),
-                    this.passwordInput.getText().toString(),
+        this.btnRegister.setOnClickListener(e ->
+            this.dispatcher.dispatch(
+                PerformRegisterAction.create(
+                    registerFormStore.getState().email,
+                    registerFormStore.getState().username,
+                    registerFormStore.getState().password,
                     this.fAuth
-            ));
-        });
+                )
+                    .subscribe(success -> {
+                        if (!success) return;
+
+                        dispatcher.dispatch(OnInputChangeEvent.create("", "username", "register_form"));
+                        dispatcher.dispatch(OnInputChangeEvent.create("", "email", "register_form"));
+                        dispatcher.dispatch(OnInputChangeEvent.create("", "password", "register_form"));
+
+                        this._goToTodosActivity();
+                    })
+            );
+        );
 
         this.txtRegisterSwitch.setOnClickListener(e -> {
             dispatcher.dispatch(AuthErrorAction.create(null));
@@ -138,6 +155,10 @@ public class RegisterActivity extends AppCompatActivity implements IView {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         });
+
+        this.usernameInput.onControlledInputTextChange(s -> dispatcher.dispatch(OnInputChangeEvent.create(s, "username", "register_form")));
+        this.emailInput.onControlledInputTextChange(s -> dispatcher.dispatch(OnInputChangeEvent.create(s, "email", "register_form")));
+        this.passwordInput.onControlledInputTextChange(s -> dispatcher.dispatch(OnInputChangeEvent.create(s, "password", "register_form")));
     }
 
     @Override
@@ -149,15 +170,19 @@ public class RegisterActivity extends AppCompatActivity implements IView {
     @Override
     protected void onPause() {
         super.onPause();
+        this.registerFormStore.unsubscribe(this);
         this.authStore.unsubscribe(this);
         this.dispatcher.unsubscribe(this.authStore);
+        this.dispatcher.unsubscribe(this.registerFormStore);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         this.authStore.subscribe(this);
+        this.registerFormStore.subscribe(this);
         this.dispatcher.subscribe(this.authStore);
+        this.dispatcher.subscribe(this.registerFormStore);
 
         this.dispatcher.dispatch(AuthUserChangeAction.create(fAuth.getCurrentUser()));
     }
@@ -181,18 +206,19 @@ public class RegisterActivity extends AppCompatActivity implements IView {
     @Override
     public void render() {
         AuthState authState = this.authStore.getState();
-
-        if (!authState.isPerformAuth && authState.authUser != null) {
-            this._goToTodosActivity();
-            return;
-        }
+        RegisterFormState registerFormState = this.registerFormStore.getState();
 
         this.btnRegister.setEnabled(!authState.isPerformAuth);
+
+        this.usernameInput.setControlledText(registerFormState.username);
         this.usernameInput.setEnabled(!authState.isPerformAuth);
+
+        this.emailInput.setControlledText(registerFormState.email);
         this.emailInput.setEnabled(!authState.isPerformAuth);
+
+        this.passwordInput.setControlledText(registerFormState.password);
         this.passwordInput.setEnabled(!authState.isPerformAuth);
 
         txtAuthErrorDisplay.setText(authState.error);
-
     }
 }
