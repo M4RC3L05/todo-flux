@@ -10,7 +10,7 @@ public class TodoState {
     public final boolean isPerformingAction;
     public final String error;
 
-    private TodoState(List<Todo> todos, boolean isLoading, boolean isPerformingAction, String error) {
+    public TodoState(List<Todo> todos, boolean isLoading, boolean isPerformingAction, String error) {
         this.todos = todos;
         this.isLoading = isLoading;
         this.isPerformingAction = isPerformingAction;

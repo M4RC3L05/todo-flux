@@ -7,7 +7,7 @@ import java.util.List;
 public class InitTodosAction extends BaseAction {
     public final List<Todo> todos;
 
-    private InitTodosAction(List<Todo> todos) {
+    public InitTodosAction(List<Todo> todos) {
         this.todos = todos;
     }
 

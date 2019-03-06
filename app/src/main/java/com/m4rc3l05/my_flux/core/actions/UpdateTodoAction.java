@@ -6,7 +6,7 @@ public class UpdateTodoAction extends BaseAction {
     public final Todo newTodo;
     public final String refId;
 
-    private UpdateTodoAction(Todo newTodo, String refId) {
+    public UpdateTodoAction(Todo newTodo, String refId) {
         this.newTodo = newTodo;
         this.refId = refId;
     }

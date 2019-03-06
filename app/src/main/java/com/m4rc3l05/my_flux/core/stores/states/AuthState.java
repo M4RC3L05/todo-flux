@@ -7,7 +7,7 @@ public class AuthState {
     public final boolean isPerformAuth;
     public final String error;
 
-    private AuthState(FirebaseUser user, boolean isPerformAuth, String error) {
+    public AuthState(FirebaseUser user, boolean isPerformAuth, String error) {
         this.authUser = user;
         this.isPerformAuth = isPerformAuth;
         this.error = error;

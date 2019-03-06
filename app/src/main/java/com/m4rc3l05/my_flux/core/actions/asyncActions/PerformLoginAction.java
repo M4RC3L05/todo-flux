@@ -12,7 +12,7 @@ public class PerformLoginAction extends BaseAsyncAction {
     private final FirebaseAuth fAuth;
 
 
-    private PerformLoginAction(String email, String password, FirebaseAuth fAuth) {
+    public PerformLoginAction(String email, String password, FirebaseAuth fAuth) {
         this.email = email;
         this.password = password;
         this.fAuth = fAuth;

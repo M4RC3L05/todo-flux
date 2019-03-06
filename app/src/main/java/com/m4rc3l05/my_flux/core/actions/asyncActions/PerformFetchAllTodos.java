@@ -30,7 +30,7 @@ public class PerformFetchAllTodos extends BaseAsyncAction {
     private Context ctx;
 
 
-    private PerformFetchAllTodos(Context ctx, DatabaseReference databaseReference) {
+    public PerformFetchAllTodos(Context ctx, DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
         this.ctx = ctx;
     }

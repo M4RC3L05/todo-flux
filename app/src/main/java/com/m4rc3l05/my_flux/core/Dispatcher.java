@@ -10,7 +10,7 @@ import java.util.List;
 public class Dispatcher {
     private final List<Store> _stores;
 
-    private Dispatcher() {
+    public Dispatcher() {
         this._stores = new ArrayList<>();
     }
 

@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class AuthUserChangeAction extends BaseAction {
     public final FirebaseUser user;
 
-    private AuthUserChangeAction(FirebaseUser user) {
+    public AuthUserChangeAction(FirebaseUser user) {
         this.user = user;
     }
 

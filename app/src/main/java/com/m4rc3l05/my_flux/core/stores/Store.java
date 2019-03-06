@@ -11,7 +11,7 @@ public abstract class Store<T> {
     private final List<IView> _views;
     private T _state;
 
-    Store() {
+    public Store() {
         this._views = new ArrayList<IView>();
         this._state = this.getInitialState();
     }

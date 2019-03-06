@@ -5,7 +5,7 @@ public class RegisterFormState {
     public final String email;
     public final String password;
 
-    private RegisterFormState(String username, String email, String password) {
+    public RegisterFormState(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;

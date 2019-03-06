@@ -5,7 +5,7 @@ public class OnInputChangeEvent extends BaseAction {
     public final String inputName;
     public final String context;
 
-    private OnInputChangeEvent(String text, String inputName, String context) {
+    public OnInputChangeEvent(String text, String inputName, String context) {
         this.text = text;
         this.context = context;
         this.inputName = inputName;

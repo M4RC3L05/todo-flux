@@ -15,7 +15,7 @@ public class PerformDeleteTodoAction extends BaseAsyncAction {
     private final DatabaseReference databaseReference;
     private final Context ctx;
 
-    private PerformDeleteTodoAction(Todo todo, DatabaseReference databaseReference, Context ctx) {
+    public PerformDeleteTodoAction(Todo todo, DatabaseReference databaseReference, Context ctx) {
         this.todo = todo;
         this.databaseReference = databaseReference;
         this.ctx = ctx;

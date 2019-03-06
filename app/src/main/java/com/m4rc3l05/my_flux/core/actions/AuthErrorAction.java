@@ -3,7 +3,7 @@ package com.m4rc3l05.my_flux.core.actions;
 public class AuthErrorAction extends BaseAction {
     public final String error;
 
-    private AuthErrorAction(String error) {
+    public AuthErrorAction(String error) {
         this.error = error;
     }
 

@@ -16,7 +16,7 @@ public class PerformAddTodoAction extends BaseAsyncAction {
     private final Context ctx;
     private final DatabaseReference databaseReference;
 
-    private PerformAddTodoAction(Context ctx, Todo todo, DatabaseReference databaseReference) {
+    public PerformAddTodoAction(Context ctx, Todo todo, DatabaseReference databaseReference) {
         this.todo = todo;
         this.databaseReference = databaseReference;
         this.ctx = ctx;

@@ -6,7 +6,7 @@ public class UndoRemoveTodoAction extends BaseAction {
     public final Todo todo;
     public final int pos;
 
-    private UndoRemoveTodoAction(Todo todo, int pos) {
+    public UndoRemoveTodoAction(Todo todo, int pos) {
         this.todo = todo;
         this.pos = pos;
     }

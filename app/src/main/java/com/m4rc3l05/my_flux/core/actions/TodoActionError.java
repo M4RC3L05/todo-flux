@@ -3,7 +3,7 @@ package com.m4rc3l05.my_flux.core.actions;
 public class TodoActionError extends BaseAction {
     public final String error;
 
-    private TodoActionError(String error) {
+    public TodoActionError(String error) {
         this.error = error;
     }
 

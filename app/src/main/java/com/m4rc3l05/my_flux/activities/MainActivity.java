@@ -31,12 +31,16 @@ import com.m4rc3l05.my_flux.R;
 import com.m4rc3l05.my_flux.adapters.TodosRecyclerViewAdapter;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.IView;
+import com.m4rc3l05.my_flux.core.actions.OnInputChangeEvent;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformAddTodoAction;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformDeleteTodoAction;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformFetchAllTodos;
+import com.m4rc3l05.my_flux.core.customViews.ControlledEditText;
 import com.m4rc3l05.my_flux.core.stores.AuthStore;
+import com.m4rc3l05.my_flux.core.stores.TodoFormStore;
 import com.m4rc3l05.my_flux.core.stores.TodoStore;
 import com.m4rc3l05.my_flux.core.stores.states.AuthState;
+import com.m4rc3l05.my_flux.core.stores.states.TodoFormState;
 import com.m4rc3l05.my_flux.core.stores.states.TodoState;
 import com.m4rc3l05.my_flux.models.Todo;
 
@@ -55,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements IView {
     public TodosRecyclerViewAdapter mAdapter;
     public RecyclerView.LayoutManager layoutManager;
     public ProgressBar loadingTodosSpinner;
-    public EditText newTodoTextInput;
+    public ControlledEditText newTodoTextInput;
     public ConstraintLayout addNewTodoBtn;
     public FirebaseDatabase fDatabase;
     public DatabaseReference databaseReference;
@@ -63,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements IView {
     TextView btnAddTodoText;
     ImageButton btnAuthProfile;
     Container container;
+    TodoFormStore todoFormStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements IView {
 
     private void setUpDependencies() {
         this.container = Container.getInstance();
+        this.todoFormStore = (TodoFormStore) this.container.get(TodoFormStore.class.toString());
         this.dispatcher = (Dispatcher) this.container.get(Dispatcher.class.toString());
         this.todoStore = (TodoStore) this.container.get(TodoStore.class.toString());
         this.authStore = (AuthStore) this.container.get(AuthStore.class.toString());
@@ -109,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements IView {
             this.onAddNewTodo();
             return true;
         });
+
+        this.newTodoTextInput.onControlledInputTextChange(s -> dispatcher.dispatch(OnInputChangeEvent.create(s, "todoText", "todo_form")));
 
         this.btnAuthProfile.setOnClickListener(e -> {
             Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
@@ -208,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements IView {
     }
 
     public void onAddNewTodo() {
-        String text = newTodoTextInput.getText().toString().trim();
+        String text = todoFormStore.getState().todoText.trim();
 
         if (text.trim().length() <= 0) return;
 
@@ -222,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements IView {
                     .subscribe(success -> {
                         if (success) mAdapter.notifyItemInserted(0);
 
-                        newTodoTextInput.setText("");
+                        dispatcher.dispatch(OnInputChangeEvent.create("", "todoText", "todo_form"));
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(newTodoTextInput.getWindowToken(), 0);
 
@@ -237,9 +245,11 @@ public class MainActivity extends AppCompatActivity implements IView {
         super.onPause();
         this.todoStore.unsubscribe(this);
         this.authStore.unsubscribe(this);
+        this.todoFormStore.unsubscribe(this);
 
         this.dispatcher.unsubscribe(todoStore);
         this.dispatcher.unsubscribe(authStore);
+        this.dispatcher.unsubscribe(this.todoFormStore);
     }
 
     @Override
@@ -247,21 +257,21 @@ public class MainActivity extends AppCompatActivity implements IView {
         super.onResume();
         this.todoStore.subscribe(this);
         this.authStore.subscribe(this);
+        this.todoFormStore.subscribe(this);
 
         this.dispatcher.subscribe(todoStore);
         this.dispatcher.subscribe(authStore);
+        this.dispatcher.subscribe(this.todoFormStore);
     }
 
     public void render() {
         TodoState ts = this.todoStore.getState();
         AuthState authState = this.authStore.getState();
-
-        if (authState.authUser == null) {
-            this._goToLoginActivity();
-            return;
-        }
+        TodoFormState todoFormState = this.todoFormStore.getState();
 
         this.mAdapter.setItems(ts.todos);
+
+        this.newTodoTextInput.setControlledText(todoFormState.todoText);
 
         this.loadingTodosSpinner.setVisibility(ts.isLoading ? View.VISIBLE : View.INVISIBLE);
 

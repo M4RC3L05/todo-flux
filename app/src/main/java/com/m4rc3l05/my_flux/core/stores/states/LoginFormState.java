@@ -4,7 +4,7 @@ public class LoginFormState {
     public final String email;
     public final String password;
 
-    private LoginFormState(String email, String password) {
+    public LoginFormState(String email, String password) {
         this.email = email;
         this.password = password;
     }

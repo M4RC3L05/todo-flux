@@ -9,7 +9,7 @@ public abstract class BaseAsyncAction extends BaseAction implements AsyncAction 
     private List<AsyncActionSubscription> listeners;
     private boolean hasNotify;
 
-    BaseAsyncAction() {
+    public BaseAsyncAction() {
         this.listeners = new ArrayList<>();
         hasNotify = false;
     }

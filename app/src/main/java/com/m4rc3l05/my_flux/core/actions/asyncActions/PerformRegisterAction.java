@@ -16,7 +16,7 @@ public class PerformRegisterAction extends BaseAsyncAction {
     private final String password;
     private final FirebaseAuth fAuth;
 
-    private PerformRegisterAction(String email, String username, String password, FirebaseAuth fAuth) {
+    public PerformRegisterAction(String email, String username, String password, FirebaseAuth fAuth) {
         this.email = email;
         this.username = username;
         this.password = password;
