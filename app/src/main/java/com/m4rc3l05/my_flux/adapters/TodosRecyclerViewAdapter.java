@@ -36,12 +36,16 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
     private Dispatcher _dispatcher;
     private Context ctx;
     private Container container;
+    private TodoStore todoStore;
+    private AuthStore authStore;
 
     private TodosRecyclerViewAdapter(List<Todo> todos, Dispatcher dispatcher, Context ctx, Container container) {
         this._todos = todos;
         this._dispatcher = dispatcher;
         this.ctx = ctx;
         this.container = container;
+        this.todoStore = (TodoStore) container.get(TodoStore.class.getName());
+        this.authStore = (AuthStore) container.get(AuthStore.class.getName());
     }
 
     public static TodosRecyclerViewAdapter create(List<Todo> todos, Dispatcher dispatcher, Context ctx, Container container) {
@@ -51,20 +55,17 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView textView;
         private View view;
-        private CardView cardView;
         private ImageView completedMark;
 
         public MyViewHolder(View tv) {
             super(tv);
             this.view = tv;
             this.completedMark = tv.findViewById(R.id.completedMark);
-            this.cardView = tv.findViewById(R.id.card_view);
             this.textView = tv.findViewById(R.id.todotext);
         }
 
         public void bindData(Todo todo, int pos) {
 
-            // this.cardView.setCardBackgroundColor(todo.is_isDone() ? Color.parseColor("#66bb6a") : Color.parseColor("#FFFFFF"));
             this.completedMark.setColorFilter(Color.parseColor("#1DB954"));
             this.completedMark.setVisibility(todo.is_isDone() ? View.VISIBLE : View.GONE);
             this.textView.setText(todo.get_text());
@@ -73,12 +74,12 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
             else this.textView.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
 
             this.view.setOnLongClickListener(v -> {
-                if (((TodoStore) container.get(TodoStore.class.getName())).getState().isLoading || ((TodoStore) container.get(TodoStore.class.getName())).getState().isPerformingAction) return true;
+                if (todoStore.getState().isLoading || todoStore.getState().isPerformingAction) return true;
 
                 Todo updatedTodo = Todo.create(todo.get_id(), todo.get_text(), !todo.is_isDone(), todo.get_timestamp());
 
                 _dispatcher.dispatch(
-                        PerformUpdateTodoAction.create(updatedTodo, ctx, FirebaseDatabase.getInstance().getReference("todos").child(((AuthStore) container.get(AuthStore.class.getName())).getState().authUser.getUid()))
+                        PerformUpdateTodoAction.create(updatedTodo, ctx, FirebaseDatabase.getInstance().getReference("todos").child(authStore.getState().authUser.getUid()))
                             .subscribe(success -> {
                                 if (!success) return;
                                 notifyItemChanged(getAdapterPosition());
@@ -89,7 +90,7 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
             });
 
             this.view.setOnClickListener(v -> {
-                if (((TodoStore) container.get(TodoStore.class.getName())).getState().isLoading || ((TodoStore) container.get(TodoStore.class.getName())).getState().isPerformingAction) return;
+                if (todoStore.getState().isLoading || todoStore.getState().isPerformingAction) return;
 
                 Dialog d = new Dialog(ctx);
                 LayoutInflater inflater = ((MainActivity) ctx).getLayoutInflater();
