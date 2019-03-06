@@ -8,7 +8,7 @@ import java.util.List;
 
 public abstract class Store<T> {
 
-    public final List<IView> _views;
+    private final List<IView> _views;
     protected T _state;
 
     protected Store() {

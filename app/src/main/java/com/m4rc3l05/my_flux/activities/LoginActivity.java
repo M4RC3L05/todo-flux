@@ -4,10 +4,15 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,9 +22,12 @@ import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.IView;
 import com.m4rc3l05.my_flux.core.actions.AuthErrorAction;
 import com.m4rc3l05.my_flux.core.actions.AuthUserChangeAction;
+import com.m4rc3l05.my_flux.core.actions.OnInputChangeEvent;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformLoginAction;
 import com.m4rc3l05.my_flux.core.stores.AuthStore;
+import com.m4rc3l05.my_flux.core.stores.LoginFormStore;
 import com.m4rc3l05.my_flux.core.stores.states.AuthState;
+import com.m4rc3l05.my_flux.core.stores.states.LoginFormState;
 import com.m4rc3l05.my_flux.models.AuthFrase;
 
 import java.util.ArrayList;
@@ -38,6 +46,7 @@ public class LoginActivity extends AppCompatActivity implements IView {
     List<AuthFrase> authFrazes;
     Timer authFrasesTimer;
     AuthStore authStore;
+    LoginFormStore loginFormStore;
     Dispatcher dispatcher;
     FirebaseAuth fAuth;
     Container container;
@@ -70,6 +79,7 @@ public class LoginActivity extends AppCompatActivity implements IView {
                 .add(AuthFrase.create("Save you thoughts", "#1DB954"));
 
         this.container = Container.getInstance();
+        this.loginFormStore = (LoginFormStore) this.container.get(LoginFormStore.class.toString());
         this.authStore = (AuthStore) this.container.get(AuthStore.class.toString());
         this.dispatcher = (Dispatcher) this.container.get(Dispatcher.class.toString());
         this.fAuth = FirebaseAuth.getInstance();
@@ -118,13 +128,52 @@ public class LoginActivity extends AppCompatActivity implements IView {
             }
         }, 0, 5000);
 
-        this.btnLogin.setOnClickListener(e -> this.dispatcher.dispatch(PerformLoginAction.create(this.emailInput.getText().toString(), this.passwordInput.getText().toString(), fAuth)));
+        this.btnLogin.setOnClickListener(e -> this.dispatcher.dispatch(PerformLoginAction.create(loginFormStore.getState().email, loginFormStore.getState().password, fAuth)));
 
         this.txtLoginSwitch.setOnClickListener(e -> {
             dispatcher.dispatch(AuthErrorAction.create(null));
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+        });
+
+        this.emailInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (emailInput.getTag() != "from_render") dispatcher.dispatch(OnInputChangeEvent.create(s.toString(), "email", "login_form"));
+
+                emailInput.setSelection(s.length());
+                emailInput.setTag(null);
+            }
+        });
+
+        this.passwordInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (passwordInput.getTag() != "from_render") dispatcher.dispatch(OnInputChangeEvent.create(s.toString(), "password", "login_form"));
+
+                passwordInput.setSelection(s.length());
+                passwordInput.setTag(null);
+            }
         });
     }
 
@@ -147,14 +196,18 @@ public class LoginActivity extends AppCompatActivity implements IView {
     protected void onPause() {
         super.onPause();
         this.authStore.unsubscribe(this);
+        this.loginFormStore.unsubscribe(this);
         this.dispatcher.unsubscribe(this.authStore);
+        this.dispatcher.unsubscribe(this.loginFormStore);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         this.authStore.subscribe(this);
+        this.loginFormStore.subscribe(this);
         this.dispatcher.subscribe(this.authStore);
+        this.dispatcher.subscribe(this.loginFormStore);
         this.dispatcher.dispatch(AuthUserChangeAction.create(fAuth.getCurrentUser()));
     }
 
@@ -168,7 +221,7 @@ public class LoginActivity extends AppCompatActivity implements IView {
     @Override
     public void render() {
         AuthState authState = this.authStore.getState();
-        System.out.println("update " + authState.authUser);
+        LoginFormState loginFormState = this.loginFormStore.getState();
 
         if (!authState.isPerformAuth && authState.authUser != null) {
             this._goToTodosActivity();
@@ -176,7 +229,14 @@ public class LoginActivity extends AppCompatActivity implements IView {
         }
 
         this.emailInput.setEnabled(!authState.isPerformAuth);
+        this.emailInput.setTag("from_render");
+        this.emailInput.setText(loginFormState.email);
+
+
         this.passwordInput.setEnabled(!authState.isPerformAuth);
+        this.passwordInput.setTag("from_render");
+        this.passwordInput.setText(loginFormState.password);
+
         this.btnLogin.setEnabled(!authState.isPerformAuth);
 
         this.txtAuthErrorDisplay.setText(authState.error);
