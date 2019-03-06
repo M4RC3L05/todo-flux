@@ -193,8 +193,6 @@ public class LoginActivity extends AppCompatActivity implements IView {
         AuthState authState = this.authStore.getState();
         LoginFormState loginFormState = this.loginFormStore.getState();
 
-        System.out.println(loginFormState.email + " - " + loginFormState.password);
-
         this.emailInput.setEnabled(!authState.isPerformAuth);
         this.emailInput.setControlledText(loginFormState.email);
 
