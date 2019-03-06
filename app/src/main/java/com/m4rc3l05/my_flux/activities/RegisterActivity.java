@@ -146,7 +146,7 @@ public class RegisterActivity extends AppCompatActivity implements IView {
 
                         this._goToTodosActivity();
                     })
-            );
+            )
         );
 
         this.txtRegisterSwitch.setOnClickListener(e -> {
