@@ -24,6 +24,7 @@ import com.m4rc3l05.my_flux.core.actions.AuthErrorAction;
 import com.m4rc3l05.my_flux.core.actions.AuthUserChangeAction;
 import com.m4rc3l05.my_flux.core.actions.OnInputChangeEvent;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformLoginAction;
+import com.m4rc3l05.my_flux.core.customViews.ControlledEditText;
 import com.m4rc3l05.my_flux.core.stores.AuthStore;
 import com.m4rc3l05.my_flux.core.stores.LoginFormStore;
 import com.m4rc3l05.my_flux.core.stores.states.AuthState;
@@ -39,8 +40,8 @@ public class LoginActivity extends AppCompatActivity implements IView {
     TextView authFrasesDisplay;
     Button btnLogin;
     TextView txtLoginSwitch;
-    EditText passwordInput;
-    EditText emailInput;
+    ControlledEditText passwordInput;
+    ControlledEditText emailInput;
     TextView txtAuthErrorDisplay;
 
     List<AuthFrase> authFrazes;
@@ -137,44 +138,9 @@ public class LoginActivity extends AppCompatActivity implements IView {
             startActivity(intent);
         });
 
-        this.emailInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        this.emailInput.onControlledInputTextChange(s -> dispatcher.dispatch(OnInputChangeEvent.create(s, "email", "login_form")));
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (emailInput.getTag() != "from_render") dispatcher.dispatch(OnInputChangeEvent.create(s.toString(), "email", "login_form"));
-
-                emailInput.setSelection(s.length());
-                emailInput.setTag(null);
-            }
-        });
-
-        this.passwordInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (passwordInput.getTag() != "from_render") dispatcher.dispatch(OnInputChangeEvent.create(s.toString(), "password", "login_form"));
-
-                passwordInput.setSelection(s.length());
-                passwordInput.setTag(null);
-            }
-        });
+        this.passwordInput.onControlledInputTextChange(s -> dispatcher.dispatch(OnInputChangeEvent.create(s, "password", "login_form")));
     }
 
     @Override
@@ -228,14 +194,9 @@ public class LoginActivity extends AppCompatActivity implements IView {
             return;
         }
 
-        this.emailInput.setEnabled(!authState.isPerformAuth);
-        this.emailInput.setTag("from_render");
-        this.emailInput.setText(loginFormState.email);
+        this.emailInput.setControlledText(loginFormState.email);
 
-
-        this.passwordInput.setEnabled(!authState.isPerformAuth);
-        this.passwordInput.setTag("from_render");
-        this.passwordInput.setText(loginFormState.password);
+        this.passwordInput.setControlledText(loginFormState.password);
 
         this.btnLogin.setEnabled(!authState.isPerformAuth);
 
