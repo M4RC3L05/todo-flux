@@ -17,13 +17,13 @@ public class LoginFormStore extends Store<LoginFormState> {
 
     @Override
     protected LoginFormState reduce(LoginFormState state, BaseAction action) {
-        if (action instanceof OnInputChangeEvent && ((OnInputChangeEvent) action).context.equals("login_form")) {
+        if (action instanceof OnInputChangeEvent && ((OnInputChangeEvent) action).context.equals("login_form"))
             return ((OnInputChangeEvent) action).inputName.equals("email")
                     ? LoginFormState.create(((OnInputChangeEvent) action).text, state.password)
                     : ((OnInputChangeEvent) action).inputName.equals("password")
                     ? LoginFormState.create(state.email, ((OnInputChangeEvent) action).text)
                     : state;
-        }
+
 
         return state;
     }

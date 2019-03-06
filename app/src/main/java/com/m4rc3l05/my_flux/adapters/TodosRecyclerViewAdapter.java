@@ -131,7 +131,6 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
 
                 d.show();
 
-
                 todoText.requestFocus();
             });
         }
@@ -144,8 +143,7 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
         View tv = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.recycler_todo_item, viewGroup, false);
 
-        MyViewHolder vh = new MyViewHolder(tv);
-        return vh;
+        return new MyViewHolder(tv);
     }
 
     @Override
@@ -153,9 +151,7 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
         viewHolder.itemView.setTag(viewHolder);
         viewHolder.bindData(this._todos.get(i), i);
     }
-
-
-
+    
     @Override
     public int getItemCount() {
         return this._todos.size();

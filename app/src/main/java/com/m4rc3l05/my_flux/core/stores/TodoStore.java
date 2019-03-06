@@ -39,7 +39,9 @@ public class TodoStore extends Store<TodoState> {
 
             return TodoState.create(tmpTodos, false, false, null);
 
-        } else if (action instanceof RemoveTodoAction) {
+        }
+
+        if (action instanceof RemoveTodoAction) {
             List<Todo> tmpTodos = new ArrayList<>();
 
             for (Todo t: state.todos) {
@@ -48,7 +50,9 @@ public class TodoStore extends Store<TodoState> {
             }
             return TodoState.create(tmpTodos, false, false, null);
 
-        } else if (action instanceof UndoRemoveTodoAction) {
+        }
+
+        if (action instanceof UndoRemoveTodoAction) {
             List<Todo> tmpTodos = new ArrayList<>(state.todos);
 
             if (tmpTodos.size() <= 0)
@@ -57,7 +61,9 @@ public class TodoStore extends Store<TodoState> {
                 tmpTodos.add(((UndoRemoveTodoAction) action).pos, ((UndoRemoveTodoAction) action).todo);
 
             return TodoState.create(tmpTodos,false, false, null);
-        }  else if(action instanceof UpdateTodoAction) {
+        }
+
+        if(action instanceof UpdateTodoAction) {
             List<Todo> tmpTodos = new ArrayList<Todo>();
 
             for (Todo t: state.todos) {
@@ -67,14 +73,20 @@ public class TodoStore extends Store<TodoState> {
             }
 
             return TodoState.create(tmpTodos,false, false, null);
-        } else if(action instanceof InitTodosAction) {
+        }
+
+        if(action instanceof InitTodosAction)
             return TodoState.create(((InitTodosAction) action).todos,false, false, null);
-        } else if (action instanceof PerformAddTodoAction) {
+
+        if (action instanceof PerformAddTodoAction)
             return TodoState.create(state.todos, false, true, null);
-        } else if (action instanceof StartPerformTodoAction) {
+
+        if (action instanceof StartPerformTodoAction)
             return TodoState.create(state.todos, state.isLoading, true, null);
-        } else if (action instanceof TodoActionError) {
+
+        if (action instanceof TodoActionError)
             return TodoState.create(state.todos, false, false, ((TodoActionError) action).error);
-        } else return state;
+
+        return state;
     }
 }

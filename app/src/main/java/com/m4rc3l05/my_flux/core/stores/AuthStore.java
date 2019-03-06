@@ -20,14 +20,15 @@ public class AuthStore extends Store<AuthState> {
 
     @Override
     protected AuthState reduce(AuthState state, BaseAction action) {
-        if (action instanceof StartAuthAction) {
+        if (action instanceof StartAuthAction)
             return AuthState.create(state.authUser, true, null);
-        } else if (action instanceof AuthUserChangeAction) {
+
+        if (action instanceof AuthUserChangeAction)
             return AuthState.create(((AuthUserChangeAction) action).user, false, state.error);
-        } else if (action instanceof AuthErrorAction) {
+
+        if (action instanceof AuthErrorAction)
             return AuthState.create(null, false, ((AuthErrorAction) action).error);
-        }else {
-            return state;
-        }
+
+        return state;
     }
 }

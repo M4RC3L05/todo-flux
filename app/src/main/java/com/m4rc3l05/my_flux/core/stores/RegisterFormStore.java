@@ -18,7 +18,7 @@ public class RegisterFormStore extends Store<RegisterFormState> {
     @Override
     protected RegisterFormState reduce(RegisterFormState state, BaseAction action) {
 
-        if (action instanceof OnInputChangeEvent && ((OnInputChangeEvent) action).context.equals("register_form")) {
+        if (action instanceof OnInputChangeEvent && ((OnInputChangeEvent) action).context.equals("register_form"))
             return ((OnInputChangeEvent) action).inputName.equals("username")
                     ? RegisterFormState.create(((OnInputChangeEvent) action).text, state.email, state.password)
                     : ((OnInputChangeEvent) action).inputName.equals("email")
@@ -26,7 +26,6 @@ public class RegisterFormStore extends Store<RegisterFormState> {
                     : ((OnInputChangeEvent) action).inputName.equals("password")
                     ? RegisterFormState.create(state.username, state.email, ((OnInputChangeEvent) action).text)
                     : state;
-        }
 
         return state;
     }
