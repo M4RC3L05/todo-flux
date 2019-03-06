@@ -73,12 +73,12 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
             else this.textView.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
 
             this.view.setOnLongClickListener(v -> {
-                if (((TodoStore) container.get(TodoStore.class.toString())).getState().isLoading || ((TodoStore) container.get(TodoStore.class.toString())).getState().isPerformingAction) return true;
+                if (((TodoStore) container.get(TodoStore.class.getName())).getState().isLoading || ((TodoStore) container.get(TodoStore.class.getName())).getState().isPerformingAction) return true;
 
                 Todo updatedTodo = Todo.create(todo.get_id(), todo.get_text(), !todo.is_isDone(), todo.get_timestamp());
 
                 _dispatcher.dispatch(
-                        PerformUpdateTodoAction.create(updatedTodo, ctx, FirebaseDatabase.getInstance().getReference("todos").child(((AuthStore) container.get(AuthStore.class.toString())).getState().authUser.getUid()))
+                        PerformUpdateTodoAction.create(updatedTodo, ctx, FirebaseDatabase.getInstance().getReference("todos").child(((AuthStore) container.get(AuthStore.class.getName())).getState().authUser.getUid()))
                             .subscribe(success -> {
                                 if (!success) return;
                                 notifyItemChanged(getAdapterPosition());
@@ -89,7 +89,7 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
             });
 
             this.view.setOnClickListener(v -> {
-                if (((TodoStore) container.get(TodoStore.class.toString())).getState().isLoading || ((TodoStore) container.get(TodoStore.class.toString())).getState().isPerformingAction) return;
+                if (((TodoStore) container.get(TodoStore.class.getName())).getState().isLoading || ((TodoStore) container.get(TodoStore.class.getName())).getState().isPerformingAction) return;
 
                 Dialog d = new Dialog(ctx);
                 LayoutInflater inflater = ((MainActivity) ctx).getLayoutInflater();
@@ -107,7 +107,7 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
                     Todo updatedTodo = Todo.create(todo.get_id(), text, todo.is_isDone(), todo.get_timestamp());
 
                     _dispatcher.dispatch(
-                            PerformUpdateTodoAction.create(updatedTodo, ctx, FirebaseDatabase.getInstance().getReference("todos").child(((AuthStore) container.get(AuthStore.class.toString())).getState().authUser.getUid()))
+                            PerformUpdateTodoAction.create(updatedTodo, ctx, FirebaseDatabase.getInstance().getReference("todos").child(((AuthStore) container.get(AuthStore.class.getName())).getState().authUser.getUid()))
                                 .subscribe(success -> {
                                     if (!success) return;
 
