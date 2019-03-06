@@ -60,10 +60,8 @@ public class UserProfileActivity extends AppCompatActivity implements IView {
 
     private void setUpDependencies() {
         this.container = Container.getInstance();
-        this.authStore = (AuthStore) this.container.get(AuthStore.class.toString());
-        this.authStore.unsubscribe(this);
-        this.dispatcher = (Dispatcher) this.container.get(Dispatcher.class.toString());
-        this.dispatcher.subscribe(authStore);
+        this.authStore = (AuthStore) this.container.get(AuthStore.class.getName());
+        this.dispatcher = (Dispatcher) this.container.get(Dispatcher.class.getName());
     }
 
     private void _goToLoginActivity() {

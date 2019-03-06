@@ -101,10 +101,10 @@ public class MainActivity extends AppCompatActivity implements IView {
 
     private void setUpDependencies() {
         this.container = Container.getInstance();
-        this.todoFormStore = (TodoFormStore) this.container.get(TodoFormStore.class.toString());
-        this.dispatcher = (Dispatcher) this.container.get(Dispatcher.class.toString());
-        this.todoStore = (TodoStore) this.container.get(TodoStore.class.toString());
-        this.authStore = (AuthStore) this.container.get(AuthStore.class.toString());
+        this.todoFormStore = (TodoFormStore) this.container.get(TodoFormStore.class.getName());
+        this.dispatcher = (Dispatcher) this.container.get(Dispatcher.class.getName());
+        this.todoStore = (TodoStore) this.container.get(TodoStore.class.getName());
+        this.authStore = (AuthStore) this.container.get(AuthStore.class.getName());
         this.fDatabase = FirebaseDatabase.getInstance();
         this.databaseReference = this.fDatabase.getReference("todos").child(authStore.getState().authUser.getUid());
         this.databaseReference.keepSynced(true);

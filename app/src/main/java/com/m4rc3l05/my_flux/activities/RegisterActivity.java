@@ -79,9 +79,9 @@ public class RegisterActivity extends AppCompatActivity implements IView {
 
         this.container = Container.getInstance();
 
-        this.dispatcher = (Dispatcher) this.container.get(Dispatcher.class.toString());
-        this.registerFormStore = (RegisterFormStore) this.container.get(RegisterFormStore.class.toString());
-        this.authStore =  (AuthStore) this.container.get(AuthStore.class.toString());
+        this.dispatcher = (Dispatcher) this.container.get(Dispatcher.class.getName());
+        this.registerFormStore = (RegisterFormStore) this.container.get(RegisterFormStore.class.getName());
+        this.authStore =  (AuthStore) this.container.get(AuthStore.class.getName());
         this.fAuth = FirebaseAuth.getInstance();
 
         this.authFrasesTimer = new Timer();

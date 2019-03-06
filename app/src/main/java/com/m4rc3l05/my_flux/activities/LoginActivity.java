@@ -74,9 +74,9 @@ public class LoginActivity extends AppCompatActivity implements IView {
                 .add(AuthFrase.create("Save you thoughts", "#1DB954"));
 
         this.container = Container.getInstance();
-        this.loginFormStore = (LoginFormStore) this.container.get(LoginFormStore.class.toString());
-        this.authStore = (AuthStore) this.container.get(AuthStore.class.toString());
-        this.dispatcher = (Dispatcher) this.container.get(Dispatcher.class.toString());
+        this.loginFormStore = (LoginFormStore) this.container.get(LoginFormStore.class.getName());
+        this.authStore = (AuthStore) this.container.get(AuthStore.class.getName());
+        this.dispatcher = (Dispatcher) this.container.get(Dispatcher.class.getName());
         this.fAuth = FirebaseAuth.getInstance();
     }
 

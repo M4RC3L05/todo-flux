@@ -22,11 +22,11 @@ public class RootApp extends Application {
 
         Container
                 .getInstance()
-                .registerSingleton(TodoFormStore.class.toString(), TodoFormStore::create)
-                .registerSingleton(RegisterFormStore.class.toString(), RegisterFormStore::create)
-                .registerSingleton(LoginFormStore.class.toString(), LoginFormStore::create)
-                .registerSingleton(TodoStore.class.toString(), TodoStore::create)
-                .registerSingleton(AuthStore.class.toString(), AuthStore::create)
-                .registerSingleton(Dispatcher.class.toString(), Dispatcher::create);
+                .registerSingleton(TodoFormStore.class.getName(), TodoFormStore::create)
+                .registerSingleton(RegisterFormStore.class.getName(), RegisterFormStore::create)
+                .registerSingleton(LoginFormStore.class.getName(), LoginFormStore::create)
+                .registerSingleton(TodoStore.class.getName(), TodoStore::create)
+                .registerSingleton(AuthStore.class.getName(), AuthStore::create)
+                .registerSingleton(Dispatcher.class.getName(), Dispatcher::create);
     }
 }
