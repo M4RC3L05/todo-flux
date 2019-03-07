@@ -54,10 +54,6 @@ public class RegisterActivity extends AppCompatActivity implements IView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            this._goToTodosActivity();
-        }
-
         setContentView(R.layout.activity_register);
 
         this.setUpDependencies();
@@ -184,6 +180,10 @@ public class RegisterActivity extends AppCompatActivity implements IView {
         this.dispatcher.subscribe(this.registerFormStore);
 
         this.dispatcher.dispatch(AuthUserChangeAction.create(fAuth.getCurrentUser()));
+
+        if (authStore.getState().authUser != null && !authStore.getState().isPerformAuth) {
+            this._goToTodosActivity();
+        }
     }
 
     private void setUpUI() {

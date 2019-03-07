@@ -73,10 +73,6 @@ public class MainActivity extends AppCompatActivity implements IView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            this._goToLoginActivity();
-        }
-
         setContentView(R.layout.activity_main);
 
         this.setUpDependencies();
@@ -262,6 +258,10 @@ public class MainActivity extends AppCompatActivity implements IView {
         this.dispatcher.subscribe(todoStore);
         this.dispatcher.subscribe(authStore);
         this.dispatcher.subscribe(this.todoFormStore);
+
+        if (authStore.getState().authUser == null && !authStore.getState().isPerformAuth) {
+            this._goToLoginActivity();
+        }
     }
 
     public void render() {

@@ -4,6 +4,7 @@ import com.m4rc3l05.my_flux.core.actions.AuthErrorAction;
 import com.m4rc3l05.my_flux.core.actions.AuthUserChangeAction;
 import com.m4rc3l05.my_flux.core.actions.BaseAction;
 import com.m4rc3l05.my_flux.core.actions.StartAuthAction;
+import com.m4rc3l05.my_flux.core.instanceofswitch.InstanceOfSwitch;
 import com.m4rc3l05.my_flux.core.stores.states.AuthState;
 
 
@@ -20,15 +21,14 @@ public class AuthStore extends Store<AuthState> {
 
     @Override
     protected AuthState reduce(AuthState state, BaseAction action) {
-        if (action instanceof StartAuthAction)
-            return AuthState.create(state.authUser, true, null);
 
-        if (action instanceof AuthUserChangeAction)
-            return AuthState.create(((AuthUserChangeAction) action).user, false, state.error);
-
-        if (action instanceof AuthErrorAction)
-            return AuthState.create(null, false, ((AuthErrorAction) action).error);
-
-        return state;
+        return (AuthState) InstanceOfSwitch
+                .of(action)
+                .ofType(StartAuthAction.class, () -> AuthState.create(state.authUser, true, null))
+                .ofType(AuthUserChangeAction.class, () -> AuthState.create(((AuthUserChangeAction) action).user, false, state.error))
+                .ofType(AuthErrorAction.class, () -> AuthState.create(null, false, ((AuthErrorAction) action).error))
+                .orElse(() -> state)
+                .match()
+                .getOrElse(state);
     }
 }

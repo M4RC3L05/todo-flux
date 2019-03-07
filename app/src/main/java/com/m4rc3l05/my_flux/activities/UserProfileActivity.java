@@ -31,10 +31,6 @@ public class UserProfileActivity extends AppCompatActivity implements IView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            this._goToLoginActivity();
-        }
-
         setContentView(R.layout.activity_user_profile);
 
         this.setUpDependencies();
@@ -84,6 +80,10 @@ public class UserProfileActivity extends AppCompatActivity implements IView {
         this.authStore.subscribe(this);
 
         this.dispatcher.subscribe(authStore);
+
+        if (authStore.getState().authUser == null && !authStore.getState().isPerformAuth) {
+            this._goToLoginActivity();
+        }
     }
 
     @Override
