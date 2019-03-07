@@ -2,6 +2,7 @@ package com.m4rc3l05.my_flux.core.stores;
 
 import com.m4rc3l05.my_flux.core.actions.BaseAction;
 import com.m4rc3l05.my_flux.core.actions.OnInputChangeEvent;
+import com.m4rc3l05.my_flux.core.instanceofswitch.InstanceOfSwitch;
 import com.m4rc3l05.my_flux.core.stores.states.LoginFormState;
 
 public class LoginFormStore extends Store<LoginFormState> {
@@ -17,14 +18,20 @@ public class LoginFormStore extends Store<LoginFormState> {
 
     @Override
     protected LoginFormState reduce(LoginFormState state, BaseAction action) {
-        if (action instanceof OnInputChangeEvent && ((OnInputChangeEvent) action).context.equals("login_form"))
-            return ((OnInputChangeEvent) action).inputName.equals("email")
-                    ? LoginFormState.create(((OnInputChangeEvent) action).text, state.password)
-                    : ((OnInputChangeEvent) action).inputName.equals("password")
-                    ? LoginFormState.create(state.email, ((OnInputChangeEvent) action).text)
-                    : state;
 
+        return (LoginFormState) InstanceOfSwitch
+            .of(action)
+            .ofType(OnInputChangeEvent.class, () -> {
+                if (!((OnInputChangeEvent) action).context.equals("login_form")) return state;
 
-        return state;
+                return ((OnInputChangeEvent) action).inputName.equals("email")
+                        ? LoginFormState.create(((OnInputChangeEvent) action).text, state.password)
+                        : ((OnInputChangeEvent) action).inputName.equals("password")
+                        ? LoginFormState.create(state.email, ((OnInputChangeEvent) action).text)
+                        : state;
+            })
+            .orElse(() -> state)
+            .match()
+            .getOrElse(state);
     }
 }

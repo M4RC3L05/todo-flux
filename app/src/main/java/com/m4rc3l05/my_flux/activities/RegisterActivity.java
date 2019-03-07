@@ -146,6 +146,10 @@ public class RegisterActivity extends AppCompatActivity implements IView {
 
         this.txtRegisterSwitch.setOnClickListener(e -> {
             dispatcher.dispatch(AuthErrorAction.create(null));
+            dispatcher.dispatch(OnInputChangeEvent.create("", "username", "register_form"));
+            dispatcher.dispatch(OnInputChangeEvent.create("", "email", "register_form"));
+            dispatcher.dispatch(OnInputChangeEvent.create("", "password", "register_form"));
+
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

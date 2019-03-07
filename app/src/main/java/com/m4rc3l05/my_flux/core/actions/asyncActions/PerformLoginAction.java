@@ -33,7 +33,7 @@ public class PerformLoginAction extends BaseAsyncAction {
                             __notify(true);
                         } else {
                             dispatcher.dispatch(AuthErrorAction.create(task.getException().getMessage()));
-                            __notify(true);
+                            __notify(false);
                         }
                     });
         } catch (Exception e) {
