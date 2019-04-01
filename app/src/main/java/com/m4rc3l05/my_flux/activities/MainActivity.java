@@ -8,8 +8,10 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +26,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.m4rc3l05.my_flux.Container;
@@ -31,7 +36,9 @@ import com.m4rc3l05.my_flux.R;
 import com.m4rc3l05.my_flux.adapters.TodosRecyclerViewAdapter;
 import com.m4rc3l05.my_flux.core.Dispatcher;
 import com.m4rc3l05.my_flux.core.IView;
+import com.m4rc3l05.my_flux.core.actions.AddTodoAction;
 import com.m4rc3l05.my_flux.core.actions.OnInputChangeEvent;
+import com.m4rc3l05.my_flux.core.actions.UpdateTodoAction;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformAddTodoAction;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformDeleteTodoAction;
 import com.m4rc3l05.my_flux.core.actions.asyncActions.PerformFetchAllTodos;
@@ -43,6 +50,9 @@ import com.m4rc3l05.my_flux.core.stores.states.AuthState;
 import com.m4rc3l05.my_flux.core.stores.states.TodoFormState;
 import com.m4rc3l05.my_flux.core.stores.states.TodoState;
 import com.m4rc3l05.my_flux.models.Todo;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -63,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements IView {
     public ConstraintLayout addNewTodoBtn;
     public FirebaseDatabase fDatabase;
     public DatabaseReference databaseReference;
+    private SwipeRefreshLayout swipeRefreshTodos;
     ProgressBar loaderIndicatorTodoAction;
     TextView btnAddTodoText;
     ImageButton btnAuthProfile;
@@ -72,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements IView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
         this.setUpDependencies();
@@ -160,6 +170,17 @@ public class MainActivity extends AppCompatActivity implements IView {
         });
 
         ith.attachToRecyclerView(this.recyclerView);
+
+        this.swipeRefreshTodos.setOnRefreshListener(() -> {
+            this.dispatcher.dispatch(
+                PerformFetchAllTodos.create(getApplicationContext(), this.databaseReference)
+                    .subscribe(success -> {
+                        if (success) mAdapter.notifyDataSetChanged();
+
+                        this.swipeRefreshTodos.setRefreshing(false);
+                    })
+            );
+        });
     }
 
     public void onDeleteTodo(@NonNull RecyclerView.ViewHolder viewHolder) {
@@ -185,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements IView {
                             });
 
                     sb.getView().setBackgroundColor(Color.WHITE);
-                    ((TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.BLACK);
+                    ((TextView) sb.getView().findViewById(R.id.snackbar_text)).setTextColor(Color.BLACK);
 
                     sb.show();
                 })
@@ -200,6 +221,7 @@ public class MainActivity extends AppCompatActivity implements IView {
         this.loaderIndicatorTodoAction = findViewById(R.id.loaderIndicatorTodoAction);
         this.btnAddTodoText = findViewById(R.id.btnAddTodoText);
         this.btnAuthProfile = findViewById(R.id.btnAuthProfile);
+        this.swipeRefreshTodos = findViewById(R.id.swipeRefreshTodos);
 
         // this.recyclerView.setHasFixedSize(true);
         this.layoutManager = new LinearLayoutManager(this);
@@ -281,15 +303,17 @@ public class MainActivity extends AppCompatActivity implements IView {
         this.loaderIndicatorTodoAction.setVisibility(ts.isPerformingAction ? View.VISIBLE : View.GONE);
         this.btnAddTodoText.setVisibility(ts.isPerformingAction ? View.GONE : View.VISIBLE);
 
-        if (authState.authUser.getPhotoUrl() == null) {
-            this.btnAuthProfile.setImageResource(R.drawable.ic_user);
-        } else {
-            this.btnAuthProfile.setImageURI(authState.authUser.getPhotoUrl());
-        }
+        this.btnAuthProfile.setEnabled(!ts.isLoading && !ts.isPerformingAction);
 
-        if (ts.error != null) {
+        if (authState.authUser.getPhotoUrl() == null)
+            this.btnAuthProfile.setImageResource(R.drawable.ic_user);
+        else
+            this.btnAuthProfile.setImageURI(authState.authUser.getPhotoUrl());
+
+
+        if (ts.error != null)
             Toast.makeText(getApplicationContext(), ts.error, Toast.LENGTH_SHORT)
                     .show();
-        }
+
     }
 }

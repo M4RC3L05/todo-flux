@@ -65,7 +65,6 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
         }
 
         public void bindData(Todo todo, int pos) {
-
             this.completedMark.setColorFilter(Color.parseColor("#1DB954"));
             this.completedMark.setVisibility(todo.is_isDone() ? View.VISIBLE : View.GONE);
             this.textView.setText(todo.get_text());
@@ -80,10 +79,6 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
 
                 _dispatcher.dispatch(
                         PerformUpdateTodoAction.create(updatedTodo, ctx, FirebaseDatabase.getInstance().getReference("todos").child(authStore.getState().authUser.getUid()))
-                            .subscribe(success -> {
-                                if (!success) return;
-                                notifyItemChanged(getAdapterPosition());
-                            })
                 );
 
                 return true;
@@ -109,11 +104,6 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
 
                     _dispatcher.dispatch(
                             PerformUpdateTodoAction.create(updatedTodo, ctx, FirebaseDatabase.getInstance().getReference("todos").child(((AuthStore) container.get(AuthStore.class.getName())).getState().authUser.getUid()))
-                                .subscribe(success -> {
-                                    if (!success) return;
-
-                                    notifyItemChanged(getAdapterPosition());
-                                })
                     );
 
                     todoText.setText("");
@@ -148,7 +138,7 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder viewHolder, int i) {
-        viewHolder.itemView.setTag(viewHolder);
+        // viewHolder.itemView.setTag(viewHolder);
         viewHolder.bindData(this._todos.get(i), i);
     }
     
@@ -159,6 +149,16 @@ public class TodosRecyclerViewAdapter extends android.support.v7.widget.Recycler
 
     public void setItems(List<Todo> todos) {
         this._todos = todos;
+    }
+
+    public int getIndexOf(String id) {
+
+        for(Todo todo: this._todos)
+            if (todo.get_id().equals(id))
+                return this._todos.indexOf(todo);
+
+
+        return -1;
     }
 
     public Todo getTodoAt(int pos) {
